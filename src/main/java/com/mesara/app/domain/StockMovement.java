@@ -6,32 +6,29 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stock_movements")
 @Data
+@Table(name = "stock_movements")
 public class StockMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "store_id")
     private Store store;
 
-    @Column(nullable = false, precision = 10, scale = 3)
+    @Column(precision = 10, scale = 3)
     private BigDecimal quantity;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal unitPrice;
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private MovementType type;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(nullable = true, precision = 10, scale = 2)
+    private BigDecimal price; // Cena po kojoj je prodato (može biti null)
 
-    private String note;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

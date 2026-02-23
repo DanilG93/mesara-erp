@@ -4,17 +4,15 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "stores")
 @Data
+@Table(name = "stores")
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-
+    private String address;
     private String location;
-
     private boolean active = true;
 }
