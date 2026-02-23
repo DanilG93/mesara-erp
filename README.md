@@ -25,8 +25,3 @@ The project follows a **Hybrid Language Strategy**:
 - `com.mesara.app.service`: Business logic and stock calculations.
 - `com.mesara.app.controller`: Web and API endpoints.
 - `com.mesara.app.repository`: Database access layer.
-
-## ⚙️ Installation & Setup
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/DanilG93/mesara-app.git](https://github.com/DanilG93/mesara-app.git)
