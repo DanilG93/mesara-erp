@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head th:replace="~{fragments/header :: head}">
+    <title>Mesara ERP | Dashboard</title>
+</head>
+
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Pregled Poslovanja</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>120.5 <sup style="font-size: 20px">kg</sup></h3>
+                                <p>Prodato danas</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>15.2 <sup style="font-size: 20px">kg</sup></h3>
+                                <p>Ukupan Otpis (Kalo)</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-trash-alt"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>450</h3>
+                                <p>Artikala na stanju</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-box"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h3>4</h3>
+                                <p>Aktivne Radnje</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-store"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-chart-bar mr-1"></i> Prodaja po radnjama (kg)
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="salesBarChart"
+                                        style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card card-danger card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-chart-pie mr-1"></i> Udeo Otpisa po Kategoriji
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="wastePieChart"
+                                        style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h3 class="card-title">Zadnji pokreti robe (Stock Movements)</h3>
+                            </div>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>Vreme</th>
+                                        <th>Radnja</th>
+                                        <th>Artikal</th>
+                                        <th>Količina</th>
+                                        <th>Tip</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>14:20</td>
+                                        <td>Radnja Centar</td>
+                                        <td>Svinjski But</td>
+                                        <td>-2.5 kg</td>
+                                        <td><span class="badge badge-primary">PRODAJA</span></td>
+                                        <td><i class="fas fa-check text-success"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:45</td>
+                                        <td>Radnja 2</td>
+                                        <td>Pileći File</td>
+                                        <td>+50.0 kg</td>
+                                        <td><span class="badge badge-success">NABAVKA</span></td>
+                                        <td><i class="fas fa-check text-success"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:10</td>
+                                        <td>Radnja Centar</td>
+                                        <td>Juneća Plećka</td>
+                                        <td>-0.8 kg</td>
+                                        <td><span class="badge badge-danger">OTPIS</span></td>
+                                        <td><i class="fas fa-check text-success"></i></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+<script>
+    $(function () {
+      // BAR CHART - Prodaja
+      var barCanvas = $('#salesBarChart').get(0).getContext('2d');
+      new Chart(barCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['Radnja 1', 'Radnja 2', 'Radnja 3', 'Radnja 4'],
+          datasets: [{
+            label: 'Prodata količina (kg)',
+            backgroundColor: '#007bff',
+            data: [45, 78, 32, 55]
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // PIE CHART - Otpis
+      var pieCanvas = $('#wastePieChart').get(0).getContext('2d');
+      new Chart(pieCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Sveže meso', 'Prerađevine', 'Roštilj'],
+          datasets: [{
+            data: [60, 25, 15],
+            backgroundColor: ['#f56954', '#00a65a', '#f39c12']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    });
+</script>
+
+</body>
+</html>

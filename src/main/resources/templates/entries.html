@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head th:replace="~{fragments/header :: head}">
+    <title>Mesara ERP | Unos</title>
+</head>
+
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper" style="margin-left: 0; padding-top: 20px;">
+        <section class="content">
+            <div class="container-fluid">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h2><i class="fas fa-edit text-primary"></i> Dnevni Izveštaj</h2>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-success btn-lg shadow"><i class="fas fa-save"></i> SAČUVAJ IZVEŠTAJ
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card card-dark">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Radnja:</label>
+                                <select class="form-control select2">
+                                    <option>Izaberi tvoju radnju...</option>
+                                    <option>Radnja Centar</option>
+                                    <option>Radnja Vidikovac</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Datum unosa:</label>
+                                <input type="date" class="form-control" value="2024-05-25">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-outline card-primary">
+                    <div class="card-body p-0">
+                        <table class="table table-bordered table-striped">
+                            <thead class="bg-primary">
+                            <tr class="text-center">
+                                <th style="width: 200px">Artikal</th>
+                                <th>Početno stanje (kg)</th>
+                                <th class="bg-success">Nabavka (+)</th>
+                                <th class="bg-info">Prodato (-)</th>
+                                <th class="bg-danger">Otpis/Kalo (-)</th>
+                                <th>Krajnje stanje (Očekivano)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><b>Svinjski But</b></td>
+                                <td class="text-center">15.000</td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td class="text-center bg-light"><b>15.000</b></td>
+                            </tr>
+                            <tr>
+                                <td><b>Juneća Plećka</b></td>
+                                <td class="text-center">8.450</td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td class="text-center bg-light"><b>8.450</b></td>
+                            </tr>
+                            <tr>
+                                <td><b>Mleveno Meso</b></td>
+                                <td class="text-center">20.000</td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
+                                <td class="text-center bg-light"><b>20.000</b></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h5><i class="icon fas fa-info"></i> Savet za radnike</h5>
+                    Prvo unesite svu nabavku koja je stigla ujutru, a zatim prodaju i otpis na kraju smene. Sistem će
+                    automatski obračunati novo stanje za sutra.
+                </div>
+
+            </div>
+        </section>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

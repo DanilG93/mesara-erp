@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head th:replace="~{fragments/header :: head}">
+    <title>Mesara ERP | Lager</title>
+</head>
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6"><h1>Trenutno stanje zaliha (Lager)</h1></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card card-info card-outline">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Izaberi radnju za pregled:</label>
+                                <select class="form-control">
+                                    <option>Sve radnje (Zbirno)</option>
+                                    <option>Radnja Centar</option>
+                                    <option>Radnja Vidikovac</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <button class="btn btn-info btn-block"><i class="fas fa-search"></i> Filtriraj</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-primary">
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-striped table-valign-middle">
+                            <thead>
+                            <tr>
+                                <th>Artikal</th>
+                                <th>Kategorija</th>
+                                <th>Radnja</th>
+                                <th>Količina na stanju</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Svinjski But</td>
+                                <td>Sveže meso</td>
+                                <td>Radnja Centar</td>
+                                <td><b>45.500 kg</b></td>
+                                <td><span class="badge badge-success">Dovoljno</span></td>
+                            </tr>
+                            <tr>
+                                <td>Juneća Plećka</td>
+                                <td>Sveže meso</td>
+                                <td>Radnja Centar</td>
+                                <td><b class="text-danger">2.100 kg</b></td>
+                                <td><span class="badge badge-danger">Kritično - Dopuniti!</span></td>
+                            </tr>
+                            <tr>
+                                <td>Pileći File</td>
+                                <td>Sveže meso</td>
+                                <td>Radnja Vidikovac</td>
+                                <td><b>15.800 kg</b></td>
+                                <td><span class="badge badge-warning">Srednje</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
