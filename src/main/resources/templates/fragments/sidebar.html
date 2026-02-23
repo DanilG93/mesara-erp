@@ -8,33 +8,44 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+
                 <li class="nav-item">
-                    <a th:href="@{/dashboard}" class="nav-link active">
+                    <a th:href="@{/dashboard}" class="nav-link"
+                       th:classappend="${currentUri == '/dashboard' ? 'active' : ''}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a th:href="@{/inventory}" class="nav-link">
+                    <a th:href="@{/inventory}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/inventory') ? 'active' : ''}">
                         <i class="nav-icon fas fa-boxes-stacked"></i>
                         <p>Zalihe / Lager</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a th:href="@{/entries}" class="nav-link">
+                    <a th:href="@{/entries}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/entries') ? 'active' : ''}">
                         <i class="nav-icon fas fa-edit"></i>
                         <p>Dnevni Unos</p>
                     </a>
                 </li>
+
                 <li class="nav-header">ADMINISTRACIJA</li>
+
                 <li class="nav-item">
-                    <a th:href="@{/products}" class="nav-link">
+                    <a th:href="@{/products}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/products') ? 'active' : ''}">
                         <i class="nav-icon fas fa-drumstick-bite"></i>
                         <p>Artikli</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a th:href="@{/stores}" class="nav-link">
+                    <a th:href="@{/stores}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/stores') ? 'active' : ''}">
                         <i class="nav-icon fas fa-store"></i>
                         <p>Radnje</p>
                     </a>
