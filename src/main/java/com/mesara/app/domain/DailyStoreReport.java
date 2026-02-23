@@ -4,11 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "product_stocks")
-public class ProductStock {
+@Table(name = "daily_store_reports")
+public class DailyStoreReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,10 +18,11 @@ public class ProductStock {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private Date reportDate;
 
-    @Column(precision = 10, scale = 3)
-    private BigDecimal quantity;
+    @Column(precision = 12, scale = 2)
+    private BigDecimal totalRevenue;
+
+    @Column(length = 500)
+    private String note;
 }
