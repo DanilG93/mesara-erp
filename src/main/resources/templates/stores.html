@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head th:replace="~{fragments/header :: head}">
+    <title>Mesara ERP | Radnje</title>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6"><h1>Upravljanje Radnjama</h1></div>
+                    <div class="col-sm-6 text-right">
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Dodaj novu radnju</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card card-outline card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Aktivne maloprodajne lokacije</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Naziv Radnje</th>
+                                    <th>Lokacija / Adresa</th>
+                                    <th>Broj zaposlenih (opc)</th>
+                                    <th>Status</th>
+                                    <th style="width: 150px">Akcije</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><b>Radnja Centar</b></td>
+                                    <td>Kralja Petra 12, Beograd</td>
+                                    <td>3</td>
+                                    <td><span class="badge badge-success">Otvoreno</span></td>
+                                    <td>
+                                        <button class="btn btn-xs btn-info">Uredi</button>
+                                        <button class="btn btn-xs btn-danger">Zatvori</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><b>Radnja Vidikovac</b></td>
+                                    <td>Patrijarha Joanikija 5</td>
+                                    <td>2</td>
+                                    <td><span class="badge badge-success">Otvoreno</span></td>
+                                    <td>
+                                        <button class="btn btn-xs btn-info">Uredi</button>
+                                        <button class="btn btn-xs btn-danger">Zatvori</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><b>Radnja 3 - Novi Beograd</b></td>
+                                    <td>Bulevar Mihajla Pupina</td>
+                                    <td>4</td>
+                                    <td><span class="badge badge-secondary">U pripremi</span></td>
+                                    <td>
+                                        <button class="btn btn-xs btn-info">Uredi</button>
+                                        <button class="btn btn-xs btn-danger">Obriši</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+</body>
+</html>
