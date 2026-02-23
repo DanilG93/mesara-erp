@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<html xmlns:th="http://www.thymeleaf.org" lang="rs">
 <head th:replace="~{fragments/header :: head}">
     <title>Mesara ERP | Artikli</title>
 </head>
-
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
-
     <div th:replace="~{fragments/header :: navbar}"></div>
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
 
     <div class="content-wrapper">
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6"><h1>Upravljanje Artiklima</h1></div>
+                    <div class="col-sm-6"><h1>Artikli</h1></div>
                     <div class="col-sm-6 text-right">
-                        <button class="btn btn-success"><i class="fas fa-plus"></i> Dodaj novi artikal</button>
+                        <a th:href="@{/products/add}" class="btn btn-success"><i class="fas fa-plus"></i> Novi Artikal</a>
                     </div>
                 </div>
             </div>
@@ -25,60 +22,31 @@
 
         <section class="content">
             <div class="container-fluid">
-                <div class="card card-outline card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Lista svih proizvoda</h3>
-                    </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-hover text-nowrap">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Naziv Artikla</th>
-                                    <th>Kategorija</th>
-                                    <th>Jedinica</th>
-                                    <th>Trenutna Cena</th>
-                                    <th>Status</th>
-                                    <th>Akcije</th>
-                                </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Naziv</th>
+                                <th>Kategorija</th>
+                                <th>Cena</th>
+                                <th class="text-right">Akcije</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Svinjski But</td>
-                                    <td>Sveže meso</td>
-                                    <td>kg</td>
-                                    <td><b>750.00 RSD</b></td>
-                                    <td><span class="badge badge-success">Aktivno</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Juneća Plećka</td>
-                                    <td>Sveže meso</td>
-                                    <td>kg</td>
-                                    <td><b>1,100.00 RSD</b></td>
-                                    <td><span class="badge badge-success">Aktivno</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Domaća Kobasica</td>
-                                    <td>Prerađevine</td>
-                                    <td>kg</td>
-                                    <td><b>950.00 RSD</b></td>
-                                    <td><span class="badge badge-warning">Van zaliha</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                            <tr th:each="product : ${products}">
+                                <td th:text="${product.id}"></td>
+                                <td th:text="${product.name}"></td>
+                                <td th:text="${product.category}"></td>
+                                <td>
+                                    <span th:text="${product.price != null ? product.price + ' RSD' : 'Opciono'}"></span>
+                                </td>
+                                <td class="text-right">
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-info btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Obriši artikal?')"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -86,11 +54,8 @@
             </div>
         </section>
     </div>
-
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
-
 <div th:replace="~{fragments/footer :: scripts}"></div>
-
 </body>
 </html>
