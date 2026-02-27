@@ -10,10 +10,10 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
 
                 <li class="nav-item">
-                    <a th:href="@{/dashboard}" class="nav-link"
-                       th:classappend="${currentUri == '/dashboard' ? 'active' : ''}">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard</p>
+                    <a th:href="@{/entries}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/entries') ? 'active' : ''}">
+                        <i class="nav-icon fas fa-edit"></i>
+                        <p>Dnevni Unos</p>
                     </a>
                 </li>
 
@@ -26,10 +26,10 @@
                 </li>
 
                 <li class="nav-item">
-                    <a th:href="@{/entries}" class="nav-link"
-                       th:classappend="${currentUri != null && currentUri.startsWith('/entries') ? 'active' : ''}">
+                    <a th:href="@{/reports}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/reports') ? 'active' : ''}">
                         <i class="nav-icon fas fa-edit"></i>
-                        <p>Dnevni Unos</p>
+                        <p>Izvestaj</p>
                     </a>
                 </li>
 
@@ -48,6 +48,14 @@
                        th:classappend="${currentUri != null && currentUri.startsWith('/stores') ? 'active' : ''}">
                         <i class="nav-icon fas fa-store"></i>
                         <p>Radnje</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a th:href="@{/categories}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/categories') ? 'active' : ''}">
+                        <i class="nav-icon fa fa-list-alt"></i>
+                        <p>Kategorije</p>
                     </a>
                 </li>
             </ul>

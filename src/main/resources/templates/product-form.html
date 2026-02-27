@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="rs">
-<head th:replace="~{fragments/header :: head}">
-    <title>Mesara ERP | Artikal Forma</title>
-</head>
+<head th:replace="~{fragments/header :: head('Mesara ERP | Artikal Forma')}"></head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
     <div th:replace="~{fragments/header :: navbar}"></div>
@@ -24,11 +22,14 @@
                                 <input type="text" th:field="*{name}" class="form-group form-control" required/>
                             </div>
                             <div class="form-group">
-                                <label>Kategorija</label>
+                                <label>Kategorija (Opciono)</label>
                                 <select th:field="*{category}" class="form-control">
-                                    <option value="SVEŽE MESO">SVEŽE MESO</option>
-                                    <option value="PRERAĐEVINE">PRERAĐEVINE</option>
-                                    <option value="OSTALO">OSTALO</option>
+                                    <option th:value="${null}">-- Bez kategorije --</option>
+
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.name}">
+                                    </option>
                                 </select>
                             </div>
                             <div class="form-group">
