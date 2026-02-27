@@ -1,0 +1,559 @@
+/* --- OSNOVNI STIL ZA EKRAN --- */
+.info-box {
+	min-height: 80px;
+	border-radius: 10px;
+	border: 1px solid #dee2e6;
+}
+
+.filter-section-interactive {
+	background: #f8f9fa;
+	border-radius: 12px;
+	padding: 25px;
+	border: 1px solid #007bff;
+}
+
+.filter-label {
+	font-weight: bold;
+	color: #333;
+	border-bottom: 2px solid #007bff;
+	margin-bottom: 15px;
+	display: block;
+}
+
+.checkbox-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.checkbox-item {
+	display: flex;
+	align-items: center;
+	background: white;
+	padding: 4px 12px;
+	border: 1px solid #ced4da;
+	border-radius: 20px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	transition: 0.2s;
+}
+
+.checkbox-item:hover {
+	border-color: #007bff;
+	background: #f0f7ff;
+}
+
+.checkbox-item input {
+	margin-right: 6px;
+}
+
+.chart-container-pie {
+	position: relative;
+	height: 240px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.chart-container-bar {
+	position: relative;
+	height: 450px;
+	width: 100%;
+}
+
+.print-selector-ui {
+	float: right;
+	font-size: 13px;
+	font-weight: bold;
+	cursor: pointer;
+	background: rgba(255, 255, 255, 0.2);
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.print-selector-ui:hover {
+	background: rgba(255, 255, 255, 0.4);
+}
+
+.print-selector-ui input {
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+.print-report-summary {
+	display: none;
+}
+
+.developer-signature {
+	display: none;
+}
+
+.d-none-print {
+	display: none !important;
+}
+
+.report-section {
+	margin-bottom: 2rem;
+	width: 100%;
+}
+
+/* =======================================================
+       OPŠTI STILOVI ZA ŠTAMPU (ZAJEDNIČKO)
+       ======================================================= */
+@media print {
+	body {
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+
+	.main-sidebar,
+	.main-header,
+	.filter-section-interactive,
+	.btn-action-group,
+	.print-selector-ui,
+	.d-print-none,
+	.main-footer {
+		display: none !important;
+	}
+
+	body,
+	.content-wrapper {
+		background: white !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.content-wrapper {
+		margin-left: 0 !important;
+	}
+
+	.container-fluid {
+		padding: 0 !important;
+	}
+
+	.content-header {
+		padding: 0 !important;
+		margin-bottom: 5px !important;
+	}
+
+	.print-report-summary {
+		display: block !important;
+		margin-bottom: 15px !important;
+		padding: 15px !important;
+		border: 1px solid #dee2e6 !important;
+		background-color: #f8f9fa !important;
+		border-radius: 8px !important;
+	}
+
+	.print-report-summary h3 {
+		margin-bottom: 10px !important;
+		font-size: 14pt !important;
+		padding-bottom: 5px !important;
+		text-transform: uppercase !important;
+	}
+
+	.print-summary-row {
+		margin-bottom: 4px !important;
+		font-size: 10.5pt !important;
+		color: #333;
+		line-height: 1.3 !important;
+	}
+
+	/* OVO PRETVARA VREMENSKI PERIOD, UKLJUČENE RADNJE ITD U VELIKA SLOVA */
+	.print-label {
+		font-weight: bold;
+		color: #000;
+		margin-right: 8px;
+		text-transform: uppercase !important;
+	}
+
+	.pie-row {
+		display: flex !important;
+		flex-wrap: nowrap !important;
+		width: 100% !important;
+		justify-content: space-between !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+
+	.col-print-4 {
+		width: 32.5% !important;
+		flex: 0 0 32.5% !important;
+		max-width: 32.5% !important;
+		padding: 0 !important;
+	}
+
+	.pie-body {
+		height: 160px !important;
+		padding: 5px !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+	}
+
+	.chart-container-pie {
+		height: 140px !important;
+		width: 100% !important;
+		display: flex !important;
+		justify-content: center !important;
+	}
+
+	.pie-body canvas {
+		max-width: 100% !important;
+		max-height: 100% !important;
+	}
+
+	.chart-container-bar {
+		width: 100% !important;
+		height: 300px !important;
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+	}
+
+	.chart-container-bar canvas {
+		width: 100% !important;
+		max-width: 100% !important;
+		height: 100% !important;
+	}
+
+	.report-section {
+		margin-bottom: 15px !important;
+		width: 100% !important;
+	}
+
+	.card {
+		border: 1px solid #dee2e6 !important;
+		box-shadow: none !important;
+		width: 100% !important;
+		margin-bottom: 0 !important;
+	}
+
+	.card-header {
+		padding: 8px 15px !important;
+		border-bottom: 1px solid #dee2e6 !important;
+	}
+
+	.table-print-header {
+		background-color: #343a40 !important;
+	}
+
+	.table-print-header h3 {
+		color: #ffffff !important;
+		text-transform: uppercase !important;
+		font-size: 15pt !important;
+		font-weight: bold !important;
+	}
+
+	.table {
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 0 auto !important;
+	}
+
+	/* Sve u tabeli velikim slovima, font povećan 10% */
+	.table th,
+	.table td {
+		font-size: 12pt !important;
+		padding: 8px !important;
+		vertical-align: middle !important;
+		text-transform: uppercase !important;
+	}
+
+	.table thead th {
+		background-color: #f8f9fa !important;
+		color: black !important;
+		font-size: 13pt !important;
+		text-transform: uppercase !important;
+	}
+
+	.table tfoot td {
+		background-color: #e9ecef !important;
+		color: black !important;
+		font-weight: bold !important;
+		font-size: 13pt !important;
+		text-transform: uppercase !important;
+	}
+
+	.table .text-left {
+		padding-left: 10px !important;
+		text-align: left !important;
+	}
+
+	.text-white {
+		color: black !important;
+	}
+
+	.developer-signature {
+		display: block !important;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		text-align: center !important;
+		font-size: 10px !important;
+		font-weight: bold;
+		color: #6c757d !important;
+		background: white !important;
+		padding: 6px 0;
+		z-index: 9999;
+		text-transform: none !important;
+	}
+}
+
+/* =======================================================
+       STILOVI SAMO ZA POLOŽENU ŠTAMPU (KADA IMA KLASU landscape-print)
+       ======================================================= */
+@media print {
+	body.landscape-print {
+		height: 100vh !important;
+	}
+
+	/* Skrivamo spoljni naslov da bi sažetak savršeno legao na vrh */
+	body.landscape-print .content-header {
+		display: none !important;
+	}
+
+	/* 14% VISINE - SAŽETAK */
+	body.landscape-print .print-report-summary {
+		height: 14vh !important;
+		margin-bottom: 1.5vh !important;
+		/* 1.5% Razmak */
+		padding: 10px 15px !important;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	/* 34% VISINE - KRUGOVI */
+	body.landscape-print .report-section:nth-child(1) {
+		height: 34vh !important;
+		margin-bottom: 1.5vh !important;
+		/* 1.5% Razmak */
+	}
+
+	body.landscape-print .report-section:nth-child(1) .card {
+		height: 100% !important;
+		display: flex;
+		flex-direction: column;
+	}
+
+	body.landscape-print .pie-body {
+		flex-grow: 1;
+		min-height: 0;
+		padding: 5px !important;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	body.landscape-print .chart-container-pie {
+		height: 100% !important;
+		width: 100% !important;
+	}
+
+	/* 49% VISINE - GLAVNI GRAF (Stavljeno 49 umesto 50 da ne probije piksel na novu stranu) */
+	body.landscape-print .report-section:nth-child(2) {
+		height: 49vh !important;
+		margin-bottom: 0 !important;
+	}
+
+	body.landscape-print .report-section:nth-child(2) .card {
+		height: 100% !important;
+		display: flex;
+		flex-direction: column;
+	}
+
+	body.landscape-print .report-section:nth-child(2) .card-body {
+		flex-grow: 1;
+		min-height: 0;
+		padding: 10px;
+	}
+
+	body.landscape-print .chart-container-bar {
+		height: 100% !important;
+		width: 100% !important;
+	}
+
+	/* PAMETNA TABELA NA DRUGOJ STRANI (Celu širinu i visinu) */
+	body.landscape-print .page-break-table {
+		page-break-before: always !important;
+		break-before: page !important;
+		height: 96vh !important;
+		/* Skoro cela strana, lufta za potpis */
+		display: flex !important;
+		flex-direction: column !important;
+		margin-top: 0 !important;
+	}
+
+	body.landscape-print .page-break-table .card {
+		flex-grow: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	body.landscape-print .page-break-table .card-body {
+		flex-grow: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	body.landscape-print .table {
+		height: 100% !important;
+		margin-bottom: 0 !important;
+	}
+}
+
+/* =======================================================
+       STILOVI SAMO ZA USPRAVNU ŠTAMPU (KADA IMA KLASU portrait-print)
+       ======================================================= */
+@media print {
+	body.portrait-print {
+		height: 99vh !important;
+		display: flex !important;
+		flex-direction: column !important;
+		overflow: hidden !important;
+	}
+
+	body.portrait-print .wrapper,
+	body.portrait-print .content-wrapper,
+	body.portrait-print .content,
+	body.portrait-print .container-fluid,
+	body.portrait-print .report-content-container {
+		display: flex !important;
+		flex-direction: column !important;
+		flex-grow: 1 !important;
+	}
+
+	body.portrait-print .content-header h2 {
+		font-size: 13pt !important;
+		margin-bottom: 0 !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .print-report-summary {
+		margin-bottom: 5px !important;
+		padding: 8px !important;
+		flex-shrink: 0;
+	}
+
+	body.portrait-print .print-report-summary h3 {
+		font-size: 11pt !important;
+		margin-bottom: 2px !important;
+		padding-bottom: 2px !important;
+	}
+
+	body.portrait-print .print-summary-row {
+		font-size: 8.5pt !important;
+		margin-bottom: 1px !important;
+		line-height: 1.1 !important;
+	}
+
+	body.portrait-print .report-section:nth-child(1) {
+		flex-shrink: 0;
+		margin-bottom: 8px !important;
+	}
+
+	body.portrait-print .pie-row {
+		justify-content: space-between !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		gap: 0 !important;
+	}
+
+	body.portrait-print .col-print-4 {
+		width: 32.5% !important;
+		flex: 0 0 32.5% !important;
+		max-width: 32.5% !important;
+	}
+
+	body.portrait-print .pie-body {
+		height: 135px !important;
+		padding: 0 !important;
+	}
+
+	body.portrait-print .chart-container-pie {
+		height: 130px !important;
+	}
+
+	body.portrait-print .card-header {
+		padding: 2px 8px !important;
+	}
+
+	body.portrait-print .card-header h3 {
+		font-size: 9pt !important;
+		margin: 0 !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .report-section:nth-child(2) {
+		flex-shrink: 0;
+		margin-bottom: 8px !important;
+	}
+
+	body.portrait-print .chart-container-bar {
+		height: 325px !important;
+	}
+
+	body.portrait-print .report-section:nth-child(2) .card-header h3 {
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .page-break-table {
+		page-break-before: auto !important;
+		break-before: auto !important;
+		margin-top: 0px !important;
+		flex-grow: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+		margin-bottom: 25px !important;
+	}
+
+	body.portrait-print .page-break-table .card {
+		flex-grow: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	body.portrait-print .page-break-table .card-body {
+		flex-grow: 1 !important;
+		display: flex !important;
+		flex-direction: column !important;
+	}
+
+	body.portrait-print .table {
+		height: 100% !important;
+		margin-bottom: 0 !important;
+	}
+
+	body.portrait-print .table-print-header h3 {
+		font-size: 10pt !important;
+		margin: 0 !important;
+		padding: 2px 0 !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .table th,
+	body.portrait-print .table td {
+		font-size: 8.5pt !important;
+		padding: 2px !important;
+		line-height: 1 !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .table thead th {
+		font-size: 9pt !important;
+		padding: 2px !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .table tfoot td {
+		font-size: 9pt !important;
+		padding: 2px !important;
+		text-transform: uppercase !important;
+	}
+
+	body.portrait-print .table .text-left {
+		padding-left: 10px !important;
+	}
+}

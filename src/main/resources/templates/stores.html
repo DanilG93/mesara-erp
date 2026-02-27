@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="sr">
-<head th:replace="~{fragments/header :: head}">
-    <title>Mesara ERP | Lista Radnji</title>
-</head>
+<head th:replace="~{fragments/header :: head('Mesara ERP | Lista Radnji')}"></head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -42,8 +40,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="store : ${stores}">
-                                <td th:text="${store.id}">1</td>
+                            <tr th:each="store, iStat : ${stores}">
+                                <td th:text="${iStat.count}">1</td>
                                 <td th:text="${store.name}">Radnja A</td>
                                 <td th:text="${store.location}">Beograd</td>
                                 <td th:text="${store.address}">Ulica 1</td>
