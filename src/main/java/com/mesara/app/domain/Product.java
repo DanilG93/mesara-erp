@@ -15,8 +15,8 @@ public class Product {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(optional = true) // Dozvoljava da veza ne postoji
+    @JoinColumn(name = "category_id", nullable = true) // Dozvoljava NULL u bazi
     private Category category;
 
     private String unit = "kg";

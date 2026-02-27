@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>PDF Izveštaj</title>
+    <style>
+        /* DEFINICIJA STRANICE I FOOTERA */
+        @page {
+            size: A4 portrait;
+            margin: 10mm 10mm 15mm 10mm;
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+
+        #page-footer {
+            display: block;
+            position: running(footer);
+            text-align: center;
+            font-size: 9px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 3px;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 11px;
+        }
+
+        /* BLOK 1: ZAGLAVLJE */
+        .block-1 {
+            position: relative;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 8px;
+            margin-bottom: 3mm;
+            min-height: 22mm;
+        }
+        .print-timestamp {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 8px;
+            text-align: right;
+            color: #777;
+        }
+        .block-1 h2 {
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            text-align: center;
+            color: #000;
+        }
+        .criteria-box {
+            font-size: 9px;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+        .criteria-row {
+            margin-bottom: 2px;
+        }
+        .criteria-label {
+            font-weight: bold;
+            color: #000;
+            margin-right: 3px;
+        }
+
+        /* BLOK 2: GRAFIKONI */
+        .block-2 {
+            width: 100%;
+            display: table;
+            table-layout: fixed;
+            margin-bottom: 3mm;
+        }
+        .col-3 {
+            display: table-cell;
+            width: 33.33%;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .chart-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+        .chart-img {
+            max-height: 38mm;
+            max-width: 90%;
+            object-fit: contain;
+        }
+
+        /* BLOK 3: BAR GRAFIKON */
+        .block-3 {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 3mm;
+        }
+        .bar-chart-img {
+            max-height: 80mm; /* Povećano po tvojoj želji */
+            width: auto;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* BLOK 4: TABELA */
+        .block-4 {
+            width: 100%;
+            margin-top: 3mm;
+        }
+        .table-title {
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0 0 4px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid !important; }
+        th, td { border: 1px solid #dee2e6; padding: 5px; text-align: center; }
+        th { background-color: #343a40; color: white; text-transform: uppercase; }
+        .text-left { text-align: left; font-weight: bold; }
+        .tfoot-row td { background-color: #e9ecef; font-weight: bold; color: black; }
+    </style>
+</head>
+<body>
+
+<div id="page-footer">
+    developed by Danilo Gomanjuk | danilogomanjuk93@gmail.com
+</div>
+
+<div class="block-1">
+    <div class="print-timestamp">
+        VREME ŠTAMPE:<br/>
+        <strong th:text="${#dates.format(#dates.createNow(), 'dd.MM.yyyy HH:mm')}"></strong>
+    </div>
+
+    <h2>IZVEŠTAJ POSLOVANJA</h2>
+
+    <div class="criteria-box">
+        <div class="criteria-row">
+            <span class="criteria-label">PERIOD:</span>
+            <span th:text="${fromDate}"></span> DO <span th:text="${toDate}"></span>
+        </div>
+
+        <div class="criteria-row">
+            <span class="criteria-label">ARTIKLI:</span>
+            <span th:if="${selectedProductIds != null && allProducts != null && selectedProductIds.size() == allProducts.size()}" style="font-weight: bold;">SVI ARTIKLI</span>
+            <span th:unless="${selectedProductIds != null && allProducts != null && selectedProductIds.size() == allProducts.size()}" th:remove="tag">
+                <span th:each="p, iter : ${allProducts}" th:remove="tag">
+                    <span th:if="${selectedProductIds != null && selectedProductIds.contains(p.id)}"
+                          th:text="${p.name} + (!${iter.last} ? ', ' : '')"></span>
+                </span>
+            </span>
+        </div>
+
+        <div class="criteria-row">
+            <span class="criteria-label">PRODAVNICE:</span>
+            <span th:if="${selectedStoreIds != null && stores != null && selectedStoreIds.size() == stores.size()}" style="font-weight: bold;">SVE RADNJE</span>
+            <span th:unless="${selectedStoreIds != null && stores != null && selectedStoreIds.size() == stores.size()}" th:remove="tag">
+                <span th:each="s, iter : ${stores}" th:remove="tag">
+                    <span th:if="${selectedStoreIds != null && selectedStoreIds.contains(s.id)}"
+                          th:text="${s.name} + (!${iter.last} ? ', ' : '')"></span>
+                </span>
+            </span>
+        </div>
+
+        <div class="criteria-row" th:if="${topProducts != null}">
+            <span class="criteria-label">TOP PROIZVODI:</span>
+            <span th:each="tp, iter : ${topProducts}" th:remove="tag">
+                <span th:text="${tp.productName} + (!${iter.last} ? ', ' : '')"></span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="block-2">
+    <div class="col-3">
+        <div class="chart-title">UDEO NABAVKE</div>
+        <img th:src="${purchaseImg}" class="chart-img"/>
+    </div>
+    <div class="col-3">
+        <div class="chart-title">UDEO PRODAJE</div>
+        <img th:src="${salesImg}" class="chart-img"/>
+    </div>
+    <div class="col-3">
+        <div class="chart-title">UDEO OTPISA</div>
+        <img th:src="${wasteImg}" class="chart-img"/>
+    </div>
+</div>
+
+<div class="block-3">
+    <div class="chart-title">UDEO RADNJI U PROMETU ARTIKALA (KG)</div>
+    <img th:src="${barChartImg}" class="bar-chart-img"/>
+</div>
+
+<div class="block-4">
+    <h3 class="table-title">TABELA PROMETA I BILANS STANJA</h3>
+    <table>
+        <thead>
+        <tr>
+            <th class="text-left">ARTIKAL</th>
+            <th>NABAVKA</th>
+            <th>PRODATO</th>
+            <th>OTPIS</th>
+            <th>STANJE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${reportData}">
+            <td class="text-left" th:text="${row.productName}"></td>
+            <td th:text="${utils.format(row.received)} + ' kg'"></td>
+            <td th:text="${utils.format(row.sold)} + ' kg'"></td>
+            <td th:text="${utils.format(row.waste)} + ' kg'"></td>
+            <td th:with="b=${row.received - (row.sold + row.waste)}"
+                th:text="${utils.format(b)} + ' kg'"
+                th:style="${b < 0 ? 'color: red;' : (b > 0 ? 'color: green;' : '')}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr class="tfoot-row" th:with="tU=${#aggregates.sum(reportData.![received])}, tP=${#aggregates.sum(reportData.![sold])}, tO=${#aggregates.sum(reportData.![waste])}">
+            <td class="text-left">UKUPNO:</td>
+            <td th:text="${utils.format(tU)} + ' kg'"></td>
+            <td th:text="${utils.format(tP)} + ' kg'"></td>
+            <td th:text="${utils.format(tO)} + ' kg'"></td>
+            <td th:text="${utils.format(tU - (tP + tO))} + ' kg'"></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+
+</body>
+</html>
