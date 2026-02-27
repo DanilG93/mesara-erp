@@ -13,6 +13,11 @@ public class StockMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // DODAJ OVO: Ovo je veza sa pazarom i datumom izveštaja
+    @ManyToOne
+    @JoinColumn(name = "report_id")
+    private DailyStoreReport report;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
