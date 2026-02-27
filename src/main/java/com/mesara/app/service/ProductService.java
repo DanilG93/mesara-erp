@@ -19,6 +19,10 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> getAllActive() {
+        return productRepository.findAllByActiveTrue();
+    }
+
     public Product getById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Artikal nije pronađen sa ID-om: " + id));
@@ -33,5 +37,13 @@ public class ProductService {
     @Transactional
     public void delete(Long id) {
         productRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void softDelete(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proizvod nije nađen"));
+        product.setActive(false); // Postavljamo na 0
+        productRepository.save(product);
     }
 }
