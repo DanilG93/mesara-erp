@@ -18,6 +18,10 @@ public class StoreService {
         return storeRepository.findAll();
     }
 
+    public List<Store> getAllActive() {
+        return storeRepository.findAllByActiveTrue();
+    }
+
     @Transactional
     public void saveStore(Store store) {
         storeRepository.save(store);
@@ -30,5 +34,13 @@ public class StoreService {
     @Transactional
     public void deleteStore(Long id) {
         storeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void softDelete(Long id) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prodavnica nije nađena"));
+        store.setActive(false); // Postavljamo na 0
+        storeRepository.save(store);
     }
 }
