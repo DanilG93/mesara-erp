@@ -62,21 +62,23 @@ To run this project on your local machine for testing or development, follow the
    git clone [https://github.com/DanilG93/mesara-erp.git](https://github.com/DanilG93/mesara-erp.git)
 
 2. **Configure Environment Variables:**
-For security reasons, database credentials and admin logins are externalized. Before running the app,
-you MUST set the following Environment Variables in your IDE's Run Configuration (or your OS environment):
+      For security reasons, database credentials and admin logins are externalized. Before running the app,
+      you MUST set the following Environment Variables in your IDE's Run Configuration (or your OS environment):
 
-    DB_HOST = (Your MySQL host)
-    DB_PORT = (Your MySQL port, e.g., 3306)
-    DB_NAME = (Your database name)
-    DB_USER = (Your database username)
-    DB_PASS = (Your database password)
-    ADMIN_USER = (Desired admin username for the web login)
-    ADMIN_PASS = (Desired admin password for the web login)
+          DB_HOST = (Your MySQL host)
+          DB_PORT = (Your MySQL port, e.g., 3306)
+          DB_NAME = (Your database name)
+          DB_USER = (Your database username)
+          DB_PASS = (Your database password)
+          ADMIN_USER = (Desired admin username for the web login)
+          ADMIN_PASS = (Desired admin password for the web login)
 
 3. **Build and Run:**
-    mvn clean install
-    mvn spring-boot:run
-(Alternatively, just run the MesaraApplication.java main class directly from your IDE).
+
+          mvn clean install
+          mvn spring-boot:run
+          (Alternatively, just run the MesaraApplication.java main class directly from your IDE).
 
 4. **Access the Application:**
-   Open your browser and navigate to http://localhost:8080. You will be greeted by the Spring Security login page.
+
+          Open your browser and navigate to http://localhost:8080. You will be greeted by the Spring Security login page.
