@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="rs">
+<head th:replace="~{fragments/header :: head('Mesara ERP | Artikal Forma')}"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid pt-3">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title"
+                            th:text="${product.id == null ? 'Dodaj Artikal' : 'Izmeni Artikal'}"></h3>
+                    </div>
+                    <form th:action="@{/products/save}" th:object="${product}" method="post">
+                        <input type="hidden" th:field="*{id}"/>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Naziv Artikla</label>
+                                <input type="text" th:field="*{name}" class="form-group form-control" required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Kategorija (Opciono)</label>
+                                <select th:field="*{category}" class="form-control">
+                                    <option th:value="${null}">-- Bez kategorije --</option>
+
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.name}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Cena (Opciono)</label>
+                                <input type="number" step="0.01" th:field="*{price}" class="form-control"
+                                       placeholder="Unesite cenu ako postoji"/>
+                            </div>
+                        </div>
+                        <div class="card-footer text-right">
+                            <a th:href="@{/products}" class="btn btn-secondary">Odustani</a>
+                            <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="rs">
 <aside th:fragment="sidebar" class="main-sidebar sidebar-dark-primary elevation-4">
     <div class="brand-link text-center">
         <span class="brand-text font-weight-light">ADMIN PANEL</span>
@@ -8,35 +8,54 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-boxes-stacked"></i>
-                        <p>Zalihe / Lager</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a th:href="@{/entries}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/entries') ? 'active' : ''}">
                         <i class="nav-icon fas fa-edit"></i>
                         <p>Dnevni Unos</p>
                     </a>
                 </li>
-                <li class="nav-header">ADMINISTRACIJA</li>
+
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a th:href="@{/inventory}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/inventory') ? 'active' : ''}">
+                        <i class="nav-icon fas fa-boxes-stacked"></i>
+                        <p>Zalihe / Lager</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a th:href="@{/reports}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/reports') ? 'active' : ''}">
+                        <i class="nav-icon fas fa-edit"></i>
+                        <p>Izvestaj</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">ADMINISTRACIJA</li>
+
+                <li class="nav-item">
+                    <a th:href="@{/products}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/products') ? 'active' : ''}">
                         <i class="nav-icon fas fa-drumstick-bite"></i>
                         <p>Artikli</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a th:href="@{/stores}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/stores') ? 'active' : ''}">
                         <i class="nav-icon fas fa-store"></i>
                         <p>Radnje</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a th:href="@{/categories}" class="nav-link"
+                       th:classappend="${currentUri != null && currentUri.startsWith('/categories') ? 'active' : ''}">
+                        <i class="nav-icon fa fa-list-alt"></i>
+                        <p>Kategorije</p>
                     </a>
                 </li>
             </ul>

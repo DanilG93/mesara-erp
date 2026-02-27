@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
+<head th:replace="~{fragments/header :: head('Mesara ERP | Nova Radnja')}"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <div th:replace="~{fragments/header :: navbar}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Upravljanje Radnjama</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Dodaj Novu Radnju</h3>
+              </div>
+
+              <form th:action="@{/stores/save}" th:object="${store}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Naziv Radnje</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="npr. Centar 1" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Adresa</label>
+                    <input type="text" th:field="*{address}" class="form-control" placeholder="Ulica i broj">
+                  </div>
+                  <div class="form-group">
+                    <label>Lokacija (Grad)</label>
+                    <input type="text" th:field="*{location}" class="form-control" placeholder="Mladenovac">
+                  </div>
+                  <div class="form-group">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" th:field="*{active}" class="custom-control-input" id="activeSwitch" checked>
+                      <label class="custom-control-label" for="activeSwitch">Radnja je aktivna</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                  <a th:href="@{/stores}" class="btn btn-default float-right">Odustani</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

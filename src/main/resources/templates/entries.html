@@ -1,104 +1,279 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="sr">
-<head th:replace="~{fragments/header :: head}">
-    <title>Mesara ERP | Unos</title>
-</head>
+<head th:replace="~{fragments/header :: head('Mesara ERP | Dnevni Unos')}"></head>
 
 
-<body class="hold-transition sidebar-mini">
+<style>
+    .table-text-lg { font-size: 1.1rem; }
+    .input-bold-lg { font-size: 1.1rem; font-weight: bold; height: auto; }
+    .unit-label { background: transparent; border: none; font-weight: bold; color: #6c757d; }
+
+    .badge-entered {
+        font-size: 1.05rem !important;
+        padding: 0.5rem 0.8rem !important;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Stil za onemogućeno dugme */
+    .btn:disabled {
+         cursor: not-allowed;
+         opacity: 0.6;
+         filter: grayscale(0.5);
+}
+
+    .badge-entered i { font-size: 0.95rem; }
+    input[type=number] { -moz-appearance: number-input; }
+</style>
+
+<body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
     <div th:replace="~{fragments/header :: navbar}"></div>
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    <div class="content-wrapper" style="margin-left: 0; padding-top: 20px;">
-        <section class="content">
+    <div class="content-wrapper">
+        <section class="content-header">
             <div class="container-fluid">
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h2><i class="fas fa-edit text-primary"></i> Dnevni Izveštaj</h2>
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark"><i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos</h1>
                     </div>
-                    <div class="col-md-6 text-right">
-                        <button class="btn btn-success btn-lg shadow"><i class="fas fa-save"></i> SAČUVAJ IZVEŠTAJ
+                    <div class="col-sm-6 text-right">
+                        <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null}"
+                                type="submit"
+                                form="mainForm"
+                                class="btn btn-success btn-lg shadow">
+                            <i class="fas fa-save mr-1"></i> SNIMI IZVEŠTAJ
                         </button>
-                    </div>
-                </div>
 
-                <div class="card card-dark">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label>Radnja:</label>
-                                <select class="form-control select2">
-                                    <option>Izaberi tvoju radnju...</option>
-                                    <option>Radnja Centar</option>
-                                    <option>Radnja Vidikovac</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Datum unosa:</label>
-                                <input type="date" class="form-control" value="2024-05-25">
-                            </div>
+                        <button type="button"
+                                class="btn btn-danger btn-lg shadow ml-2"
+                                onclick="confirmFinalize()"
+                                th:disabled="${report == null or report.totalRevenue == null}"
+                                th:if="${not #lists.isEmpty(products)}">
+                            <i class="fas fa-flag-checkered mr-1"></i> ZAVRŠI DAN (SETUJ 0)
+                        </button>
+
+                        <div class="mt-2"
+                             th:if="${(report == null or report.totalRevenue == null) and not #lists.isEmpty(products)}">
+                            <small class="text-danger font-weight-bold">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Napomena: Prvo unesite i snimite dnevni pazar da biste otključali ovo dugme.
+                            </small>
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="card card-outline card-primary">
-                    <div class="card-body p-0">
-                        <table class="table table-bordered table-striped">
-                            <thead class="bg-primary">
-                            <tr class="text-center">
-                                <th style="width: 200px">Artikal</th>
-                                <th>Početno stanje (kg)</th>
-                                <th class="bg-success">Nabavka (+)</th>
-                                <th class="bg-info">Prodato (-)</th>
-                                <th class="bg-danger">Otpis/Kalo (-)</th>
-                                <th>Krajnje stanje (Očekivano)</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td><b>Svinjski But</b></td>
-                                <td class="text-center">15.000</td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td class="text-center bg-light"><b>15.000</b></td>
-                            </tr>
-                            <tr>
-                                <td><b>Juneća Plećka</b></td>
-                                <td class="text-center">8.450</td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td class="text-center bg-light"><b>8.450</b></td>
-                            </tr>
-                            <tr>
-                                <td><b>Mleveno Meso</b></td>
-                                <td class="text-center">20.000</td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td><input type="number" class="form-control text-center" placeholder="0.00"></td>
-                                <td class="text-center bg-light"><b>20.000</b></td>
-                            </tr>
-                            </tbody>
-                        </table>
+        <section class="content">
+            <div class="container-fluid">
+
+                <form id="mainForm" th:action="@{/entries/save}" method="post">
+                    <div class="card card-outline card-primary shadow-sm">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Radnja:</label>
+                                        <select name="storeId" id="storeSelect" class="form-control" required
+                                                onchange="refreshEntryData()">
+                                            <option value="">Izaberi radnju...</option>
+                                            <option th:each="store : ${stores}" th:value="${store.id}"
+                                                    th:text="${store.name}"
+                                                    th:selected="${selectedStoreId == store.id}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Datum:</label>
+                                        <input type="date" name="reportDate" id="dateInput" class="form-control"
+                                               th:value="${selectedDate}" onchange="refreshEntryData()">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-success text-bold">Dnevni Pazar (Total Revenue):</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-success text-white"><i
+                                                        class="fas fa-cash-register"></i></span>
+                                            </div>
+                                            <input type="number" step="0.01" min="0" name="totalRevenue"
+                                                   th:value="${report != null && report.totalRevenue != null ? report.totalRevenue : ''}"
+                                                   th:readonly="${report != null && report.totalRevenue != null}"
+                                                   class="form-control form-control-lg text-bold"
+                                                   placeholder="0.00"
+                                                   th:style="${report != null && report.totalRevenue != null ? 'background-color: #e9ecef; color: #28a745;' : 'color: #28a745;'}"
+                                                   onkeydown="if(event.keyCode==13){event.preventDefault();}">
+                                            <div class="input-group-append"><span class="input-group-text unit-label">RSD</span>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted"
+                                               th:if="${report != null && report.totalRevenue != null}"><i
+                                                class="fas fa-lock"></i> Pazar je proknjižen i zaključan.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <label>Napomena uz izveštaj (opciono):</label>
+                                    <textarea name="note" class="form-control" rows="2"
+                                              th:text="${report != null ? report.note : ''}"
+                                              th:readonly="${#lists.isEmpty(products) and report != null and report.totalRevenue != null}"
+                                              th:style="${#lists.isEmpty(products) and report != null and report.totalRevenue != null ? 'background-color: #e9ecef;' : ''}"
+                                              placeholder="Napišite ako je bilo problema..."></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="alert alert-info">
-                    <h5><i class="icon fas fa-info"></i> Savet za radnike</h5>
-                    Prvo unesite svu nabavku koja je stigla ujutru, a zatim prodaju i otpis na kraju smene. Sistem će
-                    automatski obračunati novo stanje za sutra.
-                </div>
+                    <div class="card card-success card-outline shadow-sm mb-4"
+                         th:if="${not #lists.isEmpty(groupedMovements)}">
+                        <div class="card-header border-0">
+                            <h3 class="card-title text-success text-bold"><i class="fas fa-check-double mr-2"></i>
+                                Današnji promet (Proknjiženo)</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-striped mb-0 text-center table-text-lg">
+                                <thead class="bg-light">
+                                <tr>
+                                    <th style="text-align: left;" class="pl-3">Artikal</th>
+                                    <th style="width: 150px;">Nabavka (+)</th>
+                                    <th style="width: 150px;">Prodato (-)</th>
+                                    <th style="width: 150px;">Otpis (-)</th>
+                                    <th style="width: 80px;"><i class="fas fa-lock text-muted"></i></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${groupedMovements}">
+                                    <td class="text-left pl-3"><strong th:text="${row.productName}"></strong></td>
+                                    <td>
+                                        <span th:if="${row.received != null}"
+                                              th:text="${#numbers.formatDecimal(row.received, 1, 3) + ' kg'}"
+                                              class="text-success text-bold"></span>
+                                        <span th:unless="${row.received != null}" class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${row.sold != null}"
+                                              th:text="${#numbers.formatDecimal(row.sold, 1, 3) + ' kg'}"
+                                              class="text-primary text-bold"></span>
+                                        <span th:unless="${row.sold != null}" class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${row.waste != null}"
+                                              th:text="${#numbers.formatDecimal(row.waste, 1, 3) + ' kg'}"
+                                              class="text-danger text-bold"></span>
+                                        <span th:unless="${row.waste != null}" class="text-muted">-</span>
+                                    </td>
+                                    <td><i class="fas fa-check text-success small"></i></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm" th:if="${not #lists.isEmpty(products)}">
+                        <div class="card-header bg-dark">
+                            <h3 class="card-title"><i class="fas fa-list mr-2"></i> Artikli koji čekaju na preostali
+                                unos</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered table-hover mb-0">
+                                <thead class="bg-light">
+                                <tr class="text-center">
+                                    <th style="width: 40%; text-align: left;" class="pl-3">Artikal</th>
+                                    <th style="width: 20%; color: #28a745;">Nabavka (+)</th>
+                                    <th style="width: 20%; color: #007bff;">Prodato (-)</th>
+                                    <th style="width: 20%; color: #dc3545;">Otpis (-)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="product : ${products}">
+                                    <td class="align-middle pl-3">
+                                        <strong th:text="${product.name}" class="table-text-lg"></strong>
+                                        <input type="hidden" name="productIds" th:value="${product.id}">
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}">
+                                            <span class="badge badge-light text-success badge-entered shadow-sm"><i
+                                                    class="fas fa-check"></i> Uneto</span>
+                                        </div>
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}"
+                                             class="input-group">
+                                            <input type="number" step="0.001" min="0" name="receivedAmounts"
+                                                   class="form-control text-center border-0 input-bold-lg"
+                                                   placeholder="0.000">
+                                            <div class="input-group-append"><span
+                                                    class="input-group-text unit-label">kg</span></div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}">
+                                            <span class="badge badge-light text-primary badge-entered shadow-sm"><i
+                                                    class="fas fa-check"></i> Uneto</span>
+                                        </div>
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}"
+                                             class="input-group">
+                                            <input type="number" step="0.001" min="0" name="soldAmounts"
+                                                   class="form-control text-center border-0 input-bold-lg"
+                                                   placeholder="0.000">
+                                            <div class="input-group-append"><span
+                                                    class="input-group-text unit-label">kg</span></div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}">
+                                            <span class="badge badge-light text-danger badge-entered shadow-sm"><i
+                                                    class="fas fa-check"></i> Uneto</span>
+                                        </div>
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}"
+                                             class="input-group">
+                                            <input type="number" step="0.001" min="0" name="wasteAmounts"
+                                                   class="form-control text-center border-0 input-bold-lg"
+                                                   placeholder="0.000">
+                                            <div class="input-group-append"><span
+                                                    class="input-group-text unit-label">kg</span></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+
+                <form id="finalizeForm" th:action="@{/entries/finalize}" method="post" style="display: none;">
+                    <input type="hidden" name="storeId" th:value="${selectedStoreId}">
+                    <input type="hidden" name="reportDate" th:value="${selectedDate}">
+                </form>
 
             </div>
         </section>
     </div>
+
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 </div>
 
 <div th:replace="~{fragments/footer :: scripts}"></div>
+
+<script>
+    function refreshEntryData() {
+        const storeId = document.getElementById('storeSelect').value;
+        const reportDate = document.getElementById('dateInput').value;
+        if (storeId) {
+            window.location.href = '/entries?storeId=' + storeId + '&reportDate=' + reportDate;
+        }
+    }
+
+    function confirmFinalize() {
+        if (confirm("Pažnja! Ova operacija će SVIM preostalim artiklima upisati nulu (0.000) i zaključati unos za danas. Da li ste sigurni?")) {
+            document.getElementById('finalizeForm').submit();
+        }
+    }
+</script>
 </body>
 </html>

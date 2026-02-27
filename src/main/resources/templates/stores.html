@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" lang="sr">
-<head th:replace="~{fragments/header :: head}">
-    <title>Mesara ERP | Radnje</title>
-</head>
-<body class="hold-transition sidebar-mini">
+<head th:replace="~{fragments/header :: head('Mesara ERP | Lista Radnji')}"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
     <div th:replace="~{fragments/header :: navbar}"></div>
@@ -14,9 +12,13 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6"><h1>Upravljanje Radnjama</h1></div>
+                    <div class="col-sm-6">
+                        <h1>Lista Prodavnica</h1>
+                    </div>
                     <div class="col-sm-6 text-right">
-                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Dodaj novu radnju</button>
+                        <a th:href="@{/stores/add}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Dodaj Novu Radnju
+                        </a>
                     </div>
                 </div>
             </div>
@@ -24,56 +26,39 @@
 
         <section class="content">
             <div class="container-fluid">
-                <div class="card card-outline card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Aktivne maloprodajne lokacije</h3>
-                    </div>
+                <div class="card">
                     <div class="card-body p-0">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Naziv Radnje</th>
-                                    <th>Lokacija / Adresa</th>
-                                    <th>Broj zaposlenih (opc)</th>
-                                    <th>Status</th>
-                                    <th style="width: 150px">Akcije</th>
-                                </tr>
+                            <tr>
+                                <th style="width: 10px">ID</th>
+                                <th>Naziv</th>
+                                <th>Lokacija</th>
+                                <th>Adresa</th>
+                                <th class="text-center">Status</th>
+                                <th style="width: 150px" class="text-right">Akcije</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td><b>Radnja Centar</b></td>
-                                    <td>Kralja Petra 12, Beograd</td>
-                                    <td>3</td>
-                                    <td><span class="badge badge-success">Otvoreno</span></td>
-                                    <td>
-                                        <button class="btn btn-xs btn-info">Uredi</button>
-                                        <button class="btn btn-xs btn-danger">Zatvori</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td><b>Radnja Vidikovac</b></td>
-                                    <td>Patrijarha Joanikija 5</td>
-                                    <td>2</td>
-                                    <td><span class="badge badge-success">Otvoreno</span></td>
-                                    <td>
-                                        <button class="btn btn-xs btn-info">Uredi</button>
-                                        <button class="btn btn-xs btn-danger">Zatvori</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td><b>Radnja 3 - Novi Beograd</b></td>
-                                    <td>Bulevar Mihajla Pupina</td>
-                                    <td>4</td>
-                                    <td><span class="badge badge-secondary">U pripremi</span></td>
-                                    <td>
-                                        <button class="btn btn-xs btn-info">Uredi</button>
-                                        <button class="btn btn-xs btn-danger">Obriši</button>
-                                    </td>
-                                </tr>
+                            <tr th:each="store, iStat : ${stores}">
+                                <td th:text="${iStat.count}">1</td>
+                                <td th:text="${store.name}">Radnja A</td>
+                                <td th:text="${store.location}">Beograd</td>
+                                <td th:text="${store.address}">Ulica 1</td>
+                                <td class="text-center">
+                                    <span th:if="${store.active}" class="badge badge-success">Aktivna</span>
+                                    <span th:unless="${store.active}" class="badge badge-danger">Neaktivna</span>
+                                </td>
+                                <td class="text-right">
+                                    <a th:href="@{/stores/edit/{id}(id=${store.id})}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a th:href="@{/stores/delete/{id}(id=${store.id})}" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Da li ste sigurni da želite da obrišete ovu radnju?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -82,10 +67,9 @@
         </section>
     </div>
 
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
 
 <div th:replace="~{fragments/footer :: scripts}"></div>
-
 </body>
 </html>
