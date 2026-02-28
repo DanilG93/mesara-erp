@@ -1,3 +1,7 @@
+
+# Ignore environment variables
+.env
+
 # --- Maven ---
 target/
 pom.xml.tag

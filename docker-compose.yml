@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # 1. Baza podataka (Gde se čuvaju artikli: Grill Pile, Batak...)
+  mesara-db:
+    image: mysql:8.0
+    container_name: mesara-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      # Čuvamo pazar i podatke na tvom D: disku
+      - mesara_data:/var/lib/mysql
+
+  # 2. Tvoja Java 21 aplikacija
+  mesara-app:
+    build: .
+    container_name: mesara-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mesara-db
+    environment:
+      # OVE vrednosti automatski prepisuju tvoj application.properties!
+      SPRING_DATASOURCE_URL: jdbc:mysql://mesara-db:3306/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_PASS: ${ADMIN_PASS}
+
+  # 3. NOVI RADNIK: Cloudflare Tunnel (Kopiraj ovo na dno sekcije 'services')
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: mesara-tunnel
+    # Krtica kopa tunel direktno do tvoje Jave na port 8080 unutar mreže
+    command: tunnel --url http://mesara-app:8080
+    depends_on:
+      - mesara-app
+    restart: unless-stopped
+
+volumes:
+  mesara_data:
