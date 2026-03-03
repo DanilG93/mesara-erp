@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="sr">
 <head th:replace="~{fragments/header :: head('Mesara ERP | Dnevni Unos')}"></head>
 
-
 <style>
     .table-text-lg { font-size: 1.1rem; }
     .input-bold-lg { font-size: 1.1rem; font-weight: bold; height: auto; }
@@ -23,7 +22,7 @@
          cursor: not-allowed;
          opacity: 0.6;
          filter: grayscale(0.5);
-}
+    }
 
     .badge-entered i { font-size: 0.95rem; }
     input[type=number] { -moz-appearance: number-input; }
@@ -40,10 +39,20 @@
             <div class="container-fluid">
                 <div class="row mb-3 align-items-center">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark"><i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos</h1>
+                        <h1 class="m-0 text-dark">
+                            <i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos
+                            <span th:if="${editMode}" class="badge badge-warning ml-2">REŽIM IZMENE</span>
+                        </h1>
                     </div>
                     <div class="col-sm-6 text-right">
-                        <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null}"
+
+                        <a th:if="${report != null and report.totalRevenue != null and not editMode}"
+                           th:href="@{/entries(storeId=${selectedStoreId}, reportDate=${selectedDate}, edit=true)}"
+                           class="btn btn-warning btn-lg shadow ml-2 text-dark font-weight-bold">
+                            <i class="fas fa-unlock"></i> OTKLJUČAJ ZA IZMENU
+                        </a>
+
+                        <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null or editMode}"
                                 type="submit"
                                 form="mainForm"
                                 class="btn btn-success btn-lg shadow">
@@ -54,7 +63,7 @@
                                 class="btn btn-danger btn-lg shadow ml-2"
                                 onclick="confirmFinalize()"
                                 th:disabled="${report == null or report.totalRevenue == null}"
-                                th:if="${not #lists.isEmpty(products)}">
+                                th:if="${not #lists.isEmpty(products) and not editMode}">
                             <i class="fas fa-flag-checkered mr-1"></i> ZAVRŠI DAN (SETUJ 0)
                         </button>
 
@@ -62,7 +71,7 @@
                              th:if="${(report == null or report.totalRevenue == null) and not #lists.isEmpty(products)}">
                             <small class="text-danger font-weight-bold">
                                 <i class="fas fa-exclamation-triangle mr-1"></i>
-                                Napomena: Prvo unesite i snimite dnevni pazar da biste otključali ovo dugme.
+                                Napomena: Prvo unesite i snimite dnevni pazar da biste otključali dugme za završetak dana.
                             </small>
                         </div>
                     </div>
@@ -81,19 +90,20 @@
                                     <div class="form-group">
                                         <label>Radnja:</label>
                                         <select name="storeId" id="storeSelect" class="form-control" required
-                                                onchange="refreshEntryData()">
+                                                onchange="refreshEntryData()" th:disabled="${editMode}">
                                             <option value="">Izaberi radnju...</option>
                                             <option th:each="store : ${stores}" th:value="${store.id}"
                                                     th:text="${store.name}"
                                                     th:selected="${selectedStoreId == store.id}"></option>
                                         </select>
+                                        <input th:if="${editMode}" type="hidden" name="storeId" th:value="${selectedStoreId}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Datum:</label>
                                         <input type="date" name="reportDate" id="dateInput" class="form-control"
-                                               th:value="${selectedDate}" onchange="refreshEntryData()">
+                                               th:value="${selectedDate}" onchange="refreshEntryData()" th:readonly="${editMode}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -106,25 +116,27 @@
                                             </div>
                                             <input type="number" step="0.01" min="0" name="totalRevenue"
                                                    th:value="${report != null && report.totalRevenue != null ? report.totalRevenue : ''}"
-                                                   th:readonly="${report != null && report.totalRevenue != null}"
+                                                   th:readonly="${report != null && report.totalRevenue != null and not editMode}"
                                                    class="form-control form-control-lg text-bold"
                                                    placeholder="0.00"
-                                                   th:style="${report != null && report.totalRevenue != null ? 'background-color: #e9ecef; color: #28a745;' : 'color: #28a745;'}"
+                                                   th:style="${report != null && report.totalRevenue != null and not editMode ? 'background-color: #e9ecef; color: #28a745;' : 'color: #28a745; background-color: #fff;'}"
                                                    onkeydown="if(event.keyCode==13){event.preventDefault();}">
                                             <div class="input-group-append"><span class="input-group-text unit-label">RSD</span>
                                             </div>
                                         </div>
                                         <small class="text-muted"
-                                               th:if="${report != null && report.totalRevenue != null}"><i
+                                               th:if="${report != null && report.totalRevenue != null and not editMode}"><i
                                                 class="fas fa-lock"></i> Pazar je proknjižen i zaključan.</small>
+                                        <small class="text-warning text-bold"
+                                               th:if="${editMode}"><i class="fas fa-unlock"></i> Pazar je otključan za izmenu.</small>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-2">
                                     <label>Napomena uz izveštaj (opciono):</label>
                                     <textarea name="note" class="form-control" rows="2"
                                               th:text="${report != null ? report.note : ''}"
-                                              th:readonly="${#lists.isEmpty(products) and report != null and report.totalRevenue != null}"
-                                              th:style="${#lists.isEmpty(products) and report != null and report.totalRevenue != null ? 'background-color: #e9ecef;' : ''}"
+                                              th:readonly="${#lists.isEmpty(products) and report != null and report.totalRevenue != null and not editMode}"
+                                              th:style="${#lists.isEmpty(products) and report != null and report.totalRevenue != null and not editMode ? 'background-color: #e9ecef;' : 'background-color: #fff;'}"
                                               placeholder="Napišite ako je bilo problema..."></textarea>
                                 </div>
                             </div>
@@ -132,7 +144,7 @@
                     </div>
 
                     <div class="card card-success card-outline shadow-sm mb-4"
-                         th:if="${not #lists.isEmpty(groupedMovements)}">
+                         th:if="${not #lists.isEmpty(groupedMovements) and not editMode}">
                         <div class="card-header border-0">
                             <h3 class="card-title text-success text-bold"><i class="fas fa-check-double mr-2"></i>
                                 Današnji promet (Proknjiženo)</h3>
@@ -177,9 +189,11 @@
                     </div>
 
                     <div class="card shadow-sm" th:if="${not #lists.isEmpty(products)}">
-                        <div class="card-header bg-dark">
-                            <h3 class="card-title"><i class="fas fa-list mr-2"></i> Artikli koji čekaju na preostali
-                                unos</h3>
+                        <div class="card-header" th:classappend="${editMode ? 'bg-warning' : 'bg-dark'}">
+                            <h3 class="card-title" th:classappend="${editMode ? 'text-dark font-weight-bold' : ''}">
+                                <i th:class="${editMode ? 'fas fa-edit mr-2' : 'fas fa-list mr-2'}"></i>
+                                <span th:text="${editMode ? 'Izmena artikala' : 'Artikli koji čekaju na preostali unos'}"></span>
+                            </h3>
                         </div>
                         <div class="card-body p-0">
                             <table class="table table-bordered table-hover mb-0">
@@ -197,43 +211,49 @@
                                         <strong th:text="${product.name}" class="table-text-lg"></strong>
                                         <input type="hidden" name="productIds" th:value="${product.id}">
                                     </td>
+
                                     <td class="align-middle text-center">
-                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null and not editMode}">
                                             <span class="badge badge-light text-success badge-entered shadow-sm"><i
                                                     class="fas fa-check"></i> Uneto</span>
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}"
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null and not editMode}"
                                              class="input-group">
                                             <input type="number" step="0.001" min="0" name="receivedAmounts"
                                                    class="form-control text-center border-0 input-bold-lg"
+                                                   th:value="${editMode and movementMap.get(product.id) != null ? movementMap.get(product.id).received : ''}"
                                                    placeholder="0.000">
                                             <div class="input-group-append"><span
                                                     class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
+
                                     <td class="align-middle text-center">
-                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null and not editMode}">
                                             <span class="badge badge-light text-primary badge-entered shadow-sm"><i
                                                     class="fas fa-check"></i> Uneto</span>
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}"
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null and not editMode}"
                                              class="input-group">
                                             <input type="number" step="0.001" min="0" name="soldAmounts"
                                                    class="form-control text-center border-0 input-bold-lg"
+                                                   th:value="${editMode and movementMap.get(product.id) != null ? movementMap.get(product.id).sold : ''}"
                                                    placeholder="0.000">
                                             <div class="input-group-append"><span
                                                     class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
+
                                     <td class="align-middle text-center">
-                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and not editMode}">
                                             <span class="badge badge-light text-danger badge-entered shadow-sm"><i
                                                     class="fas fa-check"></i> Uneto</span>
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}"
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and not editMode}"
                                              class="input-group">
                                             <input type="number" step="0.001" min="0" name="wasteAmounts"
                                                    class="form-control text-center border-0 input-bold-lg"
+                                                   th:value="${editMode and movementMap.get(product.id) != null ? movementMap.get(product.id).waste : ''}"
                                                    placeholder="0.000">
                                             <div class="input-group-append"><span
                                                     class="input-group-text unit-label">kg</span></div>

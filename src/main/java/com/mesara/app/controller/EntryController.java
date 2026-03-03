@@ -34,12 +34,14 @@ public class EntryController {
     public String showEntryPage(
             @RequestParam(required = false) Long storeId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+            @RequestParam(required = false, defaultValue = "false") boolean edit, // <--- DODATO
             Model model) {
 
         model.addAttribute("stores", storeService.getAllActive());
         LocalDate date = (reportDate != null) ? reportDate : LocalDate.now();
         model.addAttribute("selectedDate", date);
         model.addAttribute("selectedStoreId", storeId);
+        model.addAttribute("editMode", edit); // <--- DODATO: Šaljemo u HTML da zna u kom smo režimu
 
         if (storeId != null) {
             Store store = storeService.getById(storeId);
@@ -47,28 +49,26 @@ public class EntryController {
             model.addAttribute("report", report);
 
             if (report != null) {
-                // 1. Gornja tabela (Sve što je proknjiženo do sad)
                 model.addAttribute("groupedMovements", entryService.getGroupedMovements(report));
-
-                // 2. Mapa za proveru pojedinačnih kolona (Nabavka/Prodaja/Otpis)
                 Map<Long, MovementRowDTO> movementMap = entryService.getMovementMap(report);
                 model.addAttribute("movementMap", movementMap);
 
-                // 3. LOGIKA ZA DONJU TABELU:
-                // Artikal ostaje dole ako bar jedna kolona (Nabavka ili Prodaja ili Otpis) NIJE popunjena
-                List<Product> remaining = productService.getAllActive().stream()
-                        .filter(p -> {
-                            if (!movementMap.containsKey(p.getId())) return true;
-                            MovementRowDTO status = movementMap.get(p.getId());
-                            // Artikal ostaje dole ako je bilo koja kolona null (znači nije uneta)
-                            return status.getReceived() == null ||
-                                    status.getSold() == null ||
-                                    status.getWaste() == null;
-                        })
-                        .toList();
+                // LOGIKA ZA DONJU TABELU:
+                List<Product> remaining;
+                if (edit) {
+                    // AKO SMO U REŽIMU IZMENE: Svi artikli idu dole u input polja!
+                    remaining = productService.getAllActive();
+                } else {
+                    // AKO NIJE IZMENA: Prikazujemo samo one koji nisu popunjeni (stara logika)
+                    remaining = productService.getAllActive().stream()
+                            .filter(p -> {
+                                if (!movementMap.containsKey(p.getId())) return true;
+                                MovementRowDTO status = movementMap.get(p.getId());
+                                return status.getReceived() == null || status.getSold() == null || status.getWaste() == null;
+                            }).toList();
+                }
                 model.addAttribute("products", remaining);
             } else {
-                // Ako nema izveštaja, svi su dole i mapa je prazna
                 model.addAttribute("products", productService.getAllActive());
                 model.addAttribute("movementMap", new java.util.HashMap<Long, MovementRowDTO>());
             }

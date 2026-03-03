@@ -1,6 +1,8 @@
 package com.mesara.app.repository;
 
 import com.mesara.app.domain.DailyStoreReport;
+import com.mesara.app.domain.MovementType;
+import com.mesara.app.domain.Product;
 import com.mesara.app.domain.StockMovement;
 import com.mesara.app.dto.CategoryReportDTO;
 import com.mesara.app.dto.MovementRowDTO;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
@@ -63,5 +66,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             @Param("productIds") List<Long> productIds,
             @Param("start") LocalDate start,
             @Param("end") LocalDate end);
+
+    Optional<StockMovement> findByReportAndProductAndType(DailyStoreReport report, Product product, MovementType type);
 
 }
