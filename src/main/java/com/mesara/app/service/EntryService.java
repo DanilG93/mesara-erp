@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -118,67 +117,39 @@ public class EntryService {
         }
     }
 
-    // Ažurirana metoda za procesuiranje (računa Deltu)
     private void processMovement(Product p, Store s, BigDecimal qty, MovementType type, DailyStoreReport report) {
-        // Ako je sa forme stigao null (prazno polje), tretiramo ga kao 0.00
-        BigDecimal newQty = (qty != null && qty.compareTo(BigDecimal.ZERO) >= 0) ? qty : BigDecimal.ZERO;
+        // Snimamo samo ako je količina uneta i veća od 0
+        if (qty != null && qty.compareTo(BigDecimal.ZERO) >= 0) {
 
-        // 1. Tražimo da li smo za ovaj izveštaj i artikal VEĆ uneli ovaj tip (npr. Prodaju)
-        Optional<StockMovement> existingOpt = movementRepository.findByReportAndProductAndType(report, p, type);
+            // A. Snimanje u ISTORIJU
+            StockMovement m = new StockMovement();
+            m.setProduct(p);
+            m.setStore(s);
+            m.setQuantity(qty);
+            m.setType(type);
+            m.setReport(report);
+            movementRepository.save(m);
 
-        if (existingOpt.isPresent()) {
-            // SLUČAJ A: Radimo UPDATE (Izmena postojećeg unosa)
-            StockMovement existing = existingOpt.get();
-            BigDecimal oldQty = existing.getQuantity();
+            // B. Ažuriranje TRENUTNOG LAGERA (ProductStock)
+            if (qty.compareTo(BigDecimal.ZERO) > 0) {
+                ProductStock stock = stockRepository.findByStoreAndProduct(s, p)
+                        .orElse(new ProductStock());
 
-            // Delta (razlika) = Novo stanje - Staro stanje
-            // Primer: Bilo je 10kg, sada je 7kg. Delta = 7 - 10 = -3kg.
-            BigDecimal delta = newQty.subtract(oldQty);
+                if (stock.getId() == null) {
+                    stock.setStore(s);
+                    stock.setProduct(p);
+                    stock.setQuantity(BigDecimal.ZERO);
+                }
 
-            // Ako postoji razlika, tek onda ažuriramo bazu
-            if (delta.compareTo(BigDecimal.ZERO) != 0) {
-                existing.setQuantity(newQty);
-                movementRepository.save(existing); // Ažuriramo istoriju
-
-                updateProductStock(p, s, delta, type); // Ažuriramo magacin
-            }
-        } else {
-            // SLUČAJ B: Radimo INSERT (Prvi put se unosi)
-            if (newQty.compareTo(BigDecimal.ZERO) > 0) {
-                StockMovement m = new StockMovement();
-                m.setProduct(p);
-                m.setStore(s);
-                m.setQuantity(newQty);
-                m.setType(type);
-                m.setReport(report);
-                movementRepository.save(m);
-
-                updateProductStock(p, s, newQty, type); // Ažuriramo magacin
+                // Nabavka dodaje na lager, ostalo oduzima
+                if (type == MovementType.PURCHASE) {
+                    stock.setQuantity(stock.getQuantity().add(qty));
+                } else {
+                    stock.setQuantity(stock.getQuantity().subtract(qty));
+                }
+                stockRepository.save(stock);
             }
         }
-    }
-
-    // Pomoćna metoda za magacin koja ume da radi sa pozitivnim i negativnim "Delta" brojevima
-    private void updateProductStock(Product p, Store s, BigDecimal deltaQty, MovementType type) {
-        ProductStock stock = stockRepository.findByStoreAndProduct(s, p)
-                .orElse(new ProductStock());
-
-        if (stock.getId() == null) {
-            stock.setStore(s);
-            stock.setProduct(p);
-            stock.setQuantity(BigDecimal.ZERO);
-        }
-
-        // Nabavka dodaje u magacin, dok Prodaja i Otpis SMANJUJU magacin.
-        // PAŽNJA MATEMATIKA: Ako je delta negativna (npr. smanjio prodaju za -3kg),
-        // subtract(-3) će zapravo SABRATI (+3kg) i vratiti meso na stanje. (Matematika: Minus i Minus daju Plus).
-        if (type == MovementType.PURCHASE) {
-            stock.setQuantity(stock.getQuantity().add(deltaQty));
-        } else {
-            stock.setQuantity(stock.getQuantity().subtract(deltaQty));
-        }
-
-        stockRepository.save(stock);
     }
 
     public List<MovementRowDTO> getGroupedMovements(DailyStoreReport report) {
