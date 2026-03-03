@@ -11,4 +11,5 @@ public class MovementRowDTO {
     private BigDecimal received;
     private BigDecimal sold;
     private BigDecimal waste;
+    private Long lastId;
 }

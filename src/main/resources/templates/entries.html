@@ -25,6 +25,36 @@
          filter: grayscale(0.5);
 }
 
+//* !cod */
+/* 1. Sakrivamo AdminLTE gornji navbar */
+.main-header {
+    display: none !important;
+}
+
+/* 2. Pomeramo ceo sadržaj skroz gore jer više nema navbara */
+.content-wrapper {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 3. Pravimo traku sa dugmićima 'lepljivom' na samom vrhu */
+.sticky-top-input {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0; /* Sada ide na nulu jer smo sakrili navbar */
+    z-index: 1040; /* Viši z-index da prekrije sve dok skroluješ */
+    background-color: white;
+    border-bottom: 2px solid #28a745; /* Zelena linija da se jasno odvoji od tabele */
+    padding: 10px 0;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); /* Senka za 'lebdeći' efekat */
+}
+
+/* Popravka za sidebar - pošto smo sakrili navbar, sidebar može malo da pobegne, ovo ga fiksira */
+.main-sidebar {
+    top: 0 !important;
+}
+
     .badge-entered i { font-size: 0.95rem; }
     input[type=number] { -moz-appearance: number-input; }
 </style>
@@ -36,35 +66,29 @@
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="content-wrapper">
-        <section class="content-header">
+        <section class="content-header sticky-top-input">
             <div class="container-fluid">
-                <div class="row mb-3 align-items-center">
+                <div class="row align-items-center">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark"><i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos</h1>
+                        <h1 class="m-0 text-dark font-weight-bold">
+                            <i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos
+                        </h1>
                     </div>
                     <div class="col-sm-6 text-right">
                         <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null}"
                                 type="submit"
                                 form="mainForm"
-                                class="btn btn-success btn-lg shadow">
+                                class="btn btn-success btn-lg shadow-sm px-4">
                             <i class="fas fa-save mr-1"></i> SNIMI IZVEŠTAJ
                         </button>
 
                         <button type="button"
-                                class="btn btn-danger btn-lg shadow ml-2"
+                                class="btn btn-outline-danger btn-lg shadow-sm ml-2"
                                 onclick="confirmFinalize()"
                                 th:disabled="${report == null or report.totalRevenue == null}"
                                 th:if="${not #lists.isEmpty(products)}">
-                            <i class="fas fa-flag-checkered mr-1"></i> ZAVRŠI DAN (SETUJ 0)
+                            <i class="fas fa-flag-checkered mr-1"></i> ZAVRŠI DAN
                         </button>
-
-                        <div class="mt-2"
-                             th:if="${(report == null or report.totalRevenue == null) and not #lists.isEmpty(products)}">
-                            <small class="text-danger font-weight-bold">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
-                                Napomena: Prvo unesite i snimite dnevni pazar da biste otključali ovo dugme.
-                            </small>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -197,10 +221,14 @@
                                         <strong th:text="${product.name}" class="table-text-lg"></strong>
                                         <input type="hidden" name="productIds" th:value="${product.id}">
                                     </td>
+
                                     <td class="align-middle text-center">
                                         <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}">
-                                            <span class="badge badge-light text-success badge-entered shadow-sm"><i
-                                                    class="fas fa-check"></i> Uneto</span>
+            <span class="badge badge-light text-success badge-entered shadow-sm">
+                <i class="fas fa-check"></i> Uneto
+            </span>
+                                            <input type="hidden" name="receivedAmounts"
+                                                   th:value="${movementMap.get(product.id).received}">
                                         </div>
                                         <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null}"
                                              class="input-group">
@@ -211,10 +239,14 @@
                                                     class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
+
                                     <td class="align-middle text-center">
                                         <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}">
-                                            <span class="badge badge-light text-primary badge-entered shadow-sm"><i
-                                                    class="fas fa-check"></i> Uneto</span>
+            <span class="badge badge-light text-primary badge-entered shadow-sm">
+                <i class="fas fa-check"></i> Uneto
+            </span>
+                                            <input type="hidden" name="soldAmounts"
+                                                   th:value="${movementMap.get(product.id).sold}">
                                         </div>
                                         <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null}"
                                              class="input-group">
@@ -225,10 +257,14 @@
                                                     class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
+
                                     <td class="align-middle text-center">
                                         <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}">
-                                            <span class="badge badge-light text-danger badge-entered shadow-sm"><i
-                                                    class="fas fa-check"></i> Uneto</span>
+            <span class="badge badge-light text-danger badge-entered shadow-sm">
+                <i class="fas fa-check"></i> Uneto
+            </span>
+                                            <input type="hidden" name="wasteAmounts"
+                                                   th:value="${movementMap.get(product.id).waste}">
                                         </div>
                                         <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null}"
                                              class="input-group">
@@ -274,6 +310,14 @@
             document.getElementById('finalizeForm').submit();
         }
     }
+
+    document.addEventListener('keydown', function (event) {
+    // Ako je pritisnut Enter (13) unutar nekog INPUT-a, nemoj slati formu
+    if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
+        event.preventDefault();
+        return false;
+    }
+});
 </script>
 </body>
 </html>

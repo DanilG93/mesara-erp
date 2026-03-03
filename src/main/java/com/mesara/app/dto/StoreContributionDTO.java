@@ -13,4 +13,5 @@ public class StoreContributionDTO {
     private BigDecimal received;
     private BigDecimal sold;
     private BigDecimal waste;
+    private Long lastId;
 }
