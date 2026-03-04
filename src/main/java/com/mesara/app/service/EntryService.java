@@ -109,12 +109,42 @@ public class EntryService {
     private void processMovement(Product p, Store s, BigDecimal qty, MovementType type, DailyStoreReport report) {
         if (qty != null && qty.compareTo(BigDecimal.ZERO) >= 0) {
 
-            // IDEMPOTENCY CHECK: Provera da li već postoji ovaj unos da ne bismo duplirali lager
-            boolean alreadyExists = movementRepository.findByReport(report).stream()
-                    .anyMatch(m -> m.getProduct().getId().equals(p.getId()) && m.getType() == type);
+            // Tražimo da li već postoji snimljena stavka za ovaj artikal i ovaj tip u ovom izveštaju
+            StockMovement existingMovement = movementRepository.findByReport(report).stream()
+                    .filter(m -> m.getProduct().getId().equals(p.getId()) && m.getType() == type)
+                    .findFirst()
+                    .orElse(null);
 
-            if (!alreadyExists) {
-                // A. Snimanje u ISTORIJU
+            if (existingMovement != null) {
+                // AKO POSTOJI: Znači da radimo PREPRAVKU (UPDATE)
+                BigDecimal oldQty = existingMovement.getQuantity();
+
+                // Menjamo samo ako se količina stvarno promenila
+                if (oldQty.compareTo(qty) != 0) {
+                    // Računamo razliku (npr. bilo 10, novo 15 -> razlika je +5)
+                    BigDecimal diff = qty.subtract(oldQty);
+
+                    // 1. Ažuriraj istoriju (StockMovement)
+                    existingMovement.setQuantity(qty);
+                    movementRepository.save(existingMovement);
+
+                    // 2. Ažuriraj trenutni lager
+                    ProductStock stock = stockRepository.findByStoreAndProduct(s, p).orElse(new ProductStock());
+                    if (stock.getId() == null) {
+                        stock.setStore(s);
+                        stock.setProduct(p);
+                        stock.setQuantity(BigDecimal.ZERO);
+                    }
+
+                    if (type == MovementType.PURCHASE) {
+                        stock.setQuantity(stock.getQuantity().add(diff)); // Nabavka dodaje
+                    } else {
+                        stock.setQuantity(stock.getQuantity().subtract(diff)); // Prodaja i otpis oduzimaju
+                    }
+                    stockRepository.save(stock);
+                }
+            } else {
+                // AKO NE POSTOJI: Radimo CREATE (tvoja stara logika)
                 StockMovement m = new StockMovement();
                 m.setProduct(p);
                 m.setStore(s);
@@ -123,7 +153,6 @@ public class EntryService {
                 m.setReport(report);
                 movementRepository.save(m);
 
-                // B. Ažuriranje TRENUTNOG LAGERA
                 if (qty.compareTo(BigDecimal.ZERO) > 0) {
                     ProductStock stock = stockRepository.findByStoreAndProduct(s, p)
                             .orElse(new ProductStock());
