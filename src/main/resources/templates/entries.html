@@ -3,49 +3,88 @@
 <head th:replace="~{fragments/header :: head('Mesara ERP | Dnevni Unos')}"></head>
 
 <style>
+    /* 1. OSNOVNI STILOVI (Zajednički za sve) */
     .table-text-lg { font-size: 1.1rem; }
     .input-bold-lg { font-size: 1.1rem; font-weight: bold; height: auto; }
     .unit-label { background: transparent; border: none; font-weight: bold; color: #6c757d; }
-
     .badge-entered {
         font-size: 1.05rem !important;
         padding: 0.5rem 0.8rem !important;
         font-weight: 700;
-        letter-spacing: 0.5px;
         display: inline-flex;
         align-items: center;
         gap: 5px;
     }
-
-    /* Stil za onemogućeno dugme */
-    .btn:disabled {
-         cursor: not-allowed;
-         opacity: 0.6;
-         filter: grayscale(0.5);
-    }
-
-    /* 1. Sakrivamo AdminLTE gornji navbar */
-    .main-header { display: none !important; }
-
-    /* 2. Pomeramo ceo sadržaj skroz gore jer više nema navbara */
-    .content-wrapper { margin-top: 0 !important; padding-top: 0 !important; }
-
-    /* 3. Pravimo traku sa dugmićima 'lepljivom' na samom vrhu */
-    .sticky-top-input {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-        z-index: 1040;
-        background-color: white;
-        border-bottom: 2px solid #28a745;
-        padding: 10px 0;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-
-    .main-sidebar { top: 0 !important; }
-    .badge-entered i { font-size: 0.95rem; }
+    .btn:disabled { cursor: not-allowed; opacity: 0.6; filter: grayscale(0.5); }
     input[type=number] { -moz-appearance: number-input; }
+
+    /* 2. STICKY LOGIKA - KLJUČ REŠENJA */
+
+    /* Desktop (Kompjuteri) */
+    @media (min-width: 992px) {
+        .main-header { display: none !important; }
+        .content-wrapper { margin-top: 0 !important; padding-top: 0 !important; }
+        .main-sidebar { top: 0 !important; }
+
+        .sticky-top-input {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1039; /* Tik ispod sidebara */
+            background-color: white;
+            border-bottom: 2px solid #28a745;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+    }
+
+    /* Mobile (Telefoni) */
+    @media (max-width: 991.98px) {
+        /* Fiksiramo gornji navbar (hamburger) */
+        .main-header {
+            position: fixed !important;
+            top: 0;
+            width: 100%;
+            z-index: 1040;
+        }
+
+        /* Traka sa dugmićima ide ODMAH ispod njega i prati ga */
+        .sticky-top-input {
+            position: fixed !important;
+            top: 56px; /* Visina AdminLTE navbara */
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1039;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #28a745;
+            padding: 10px 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        /* Spuštamo ceo sadržaj da ne uđe pod fiksirane trake */
+        .content-wrapper {
+            margin-top: 140px !important; /* Prostor za oba navbara na telefonu */
+        }
+
+        /* Dugmići jedan ispod drugog na telefonu */
+        .mobile-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .mobile-btn-group .btn {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* Popravka da sidebar uvek bude PREKO svega kad se otvori */
+        .main-sidebar {
+            z-index: 1050 !important;
+        }
+    }
 </style>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -58,13 +97,13 @@
         <section class="content-header sticky-top-input">
             <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-sm-4">
+                    <div class="col-lg-4 col-sm-12">
                         <h1 class="m-0 text-dark font-weight-bold">
                             <i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos
                             <span th:if="${editMode}" class="badge badge-warning ml-2 text-sm"><i class="fas fa-unlock"></i> PREPRAVKA</span>
                         </h1>
                     </div>
-                    <div class="col-sm-8 text-right">
+                    <div class="col-lg-8 col-sm-12 text-right mobile-btn-group">
 
                         <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null or editMode}"
                                 type="submit"
@@ -157,7 +196,7 @@
                             <h3 class="card-title text-success text-bold"><i class="fas fa-check-double mr-2"></i>
                                 Današnji promet (Proknjiženo)</h3>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 table-responsive">
                             <table class="table table-sm table-striped mb-0 text-center table-text-lg">
                                 <thead class="bg-light">
                                 <tr>
@@ -201,7 +240,7 @@
                             <h3 class="card-title" th:if="${!editMode}"><i class="fas fa-list mr-2"></i> Artikli koji čekaju na preostali unos</h3>
                             <h3 class="card-title text-warning font-weight-bold" th:if="${editMode}"><i class="fas fa-edit mr-2"></i> Prepravka unetih vrednosti</h3>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 table-responsive">
                             <table class="table table-bordered table-hover mb-0">
                                 <thead class="bg-light">
                                 <tr class="text-center">
@@ -308,7 +347,6 @@
     }
 
     document.addEventListener('keydown', function (event) {
-        // Ako je pritisnut Enter (13) unutar nekog INPUT-a, nemoj slati formu
         if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
             event.preventDefault();
             return false;
