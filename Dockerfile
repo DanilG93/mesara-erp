@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Dokumentujemo port
-EXPOSE 8081
+EXPOSE 8080
 
 # Pokrećemo aplikaciju
 ENTRYPOINT ["java", "-jar", "app.jar"]
