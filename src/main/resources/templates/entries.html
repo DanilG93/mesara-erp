@@ -3,88 +3,21 @@
 <head th:replace="~{fragments/header :: head('Mesara ERP | Dnevni Unos')}"></head>
 
 <style>
-    /* 1. OSNOVNI STILOVI (Zajednički za sve) */
-    .table-text-lg { font-size: 1.1rem; }
-    .input-bold-lg { font-size: 1.1rem; font-weight: bold; height: auto; }
-    .unit-label { background: transparent; border: none; font-weight: bold; color: #6c757d; }
-    .badge-entered {
-        font-size: 1.05rem !important;
-        padding: 0.5rem 0.8rem !important;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .btn:disabled { cursor: not-allowed; opacity: 0.6; filter: grayscale(0.5); }
-    input[type=number] { -moz-appearance: number-input; }
-
-    /* 2. STICKY LOGIKA - KLJUČ REŠENJA */
-
-    /* Desktop (Kompjuteri) */
-    @media (min-width: 992px) {
-        .main-header { display: none !important; }
-        .content-wrapper { margin-top: 0 !important; padding-top: 0 !important; }
-        .main-sidebar { top: 0 !important; }
-
-        .sticky-top-input {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 1039; /* Tik ispod sidebara */
-            background-color: white;
-            border-bottom: 2px solid #28a745;
-            padding: 10px 0;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
+    /* Minimalni Custom CSS */
+    .sticky-action-bar {
+        position: sticky;
+        top: 0;
+        z-index: 1039;
+        border-bottom: 2px solid #28a745;
+        transition: all 0.3s ease;
     }
 
-    /* Mobile (Telefoni) */
-    @media (max-width: 991.98px) {
-        /* Fiksiramo gornji navbar (hamburger) */
-        .main-header {
-            position: fixed !important;
-            top: 0;
-            width: 100%;
-            z-index: 1040;
-        }
-
-        /* Traka sa dugmićima ide ODMAH ispod njega i prati ga */
-        .sticky-top-input {
-            position: fixed !important;
-            top: 56px; /* Visina AdminLTE navbara */
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 1039;
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #28a745;
-            padding: 10px 15px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-
-        /* Spuštamo ceo sadržaj da ne uđe pod fiksirane trake */
-        .content-wrapper {
-            margin-top: 140px !important; /* Prostor za oba navbara na telefonu */
-        }
-
-        /* Dugmići jedan ispod drugog na telefonu */
-        .mobile-btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .mobile-btn-group .btn {
-            width: 100% !important;
-            margin: 0 !important;
-        }
-
-        /* Popravka da sidebar uvek bude PREKO svega kad se otvori */
-        .main-sidebar {
-            z-index: 1050 !important;
-        }
+    /* Uklanjanje strelica iz number polja */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none; margin: 0;
     }
+    input[type=number] { -moz-appearance: textfield; }
 </style>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -94,32 +27,33 @@
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="content-wrapper">
-        <section class="content-header sticky-top-input">
+
+        <section class="content-header sticky-action-bar bg-white shadow-sm py-3 mb-3">
             <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-lg-4 col-sm-12">
+                    <div class="col-lg-5 col-12 mb-2 mb-lg-0">
                         <h1 class="m-0 text-dark font-weight-bold">
                             <i class="fas fa-edit text-primary mr-2"></i>Dnevni Unos
-                            <span th:if="${editMode}" class="badge badge-warning ml-2 text-sm"><i class="fas fa-unlock"></i> PREPRAVKA</span>
+                            <span th:if="${editMode}" class="badge badge-warning ml-2 text-sm">
+                                <i class="fas fa-unlock"></i> PREPRAVKA
+                            </span>
                         </h1>
                     </div>
-                    <div class="col-lg-8 col-sm-12 text-right mobile-btn-group">
 
+                    <div class="col-lg-7 col-12 d-flex flex-column flex-lg-row justify-content-lg-end">
                         <button th:if="${not #lists.isEmpty(products) or (report != null and report.totalRevenue == null) or report == null or editMode}"
-                                type="submit"
-                                form="mainForm"
-                                class="btn btn-success btn-lg shadow-sm px-4">
+                                type="submit" form="mainForm"
+                                class="btn btn-success btn-lg shadow-sm px-4 mb-2 mb-lg-0 mr-lg-2">
                             <i class="fas fa-save mr-1"></i> SNIMI IZVEŠTAJ
                         </button>
 
                         <a th:if="${report != null and !editMode and (not #lists.isEmpty(groupedMovements) or report.totalRevenue != null)}"
                            th:href="@{/entries(storeId=${selectedStoreId}, reportDate=${selectedDate}, edit=true)}"
-                           class="btn btn-warning btn-lg shadow-sm ml-2 text-dark font-weight-bold">
-                            <i class="fas fa-unlock-alt mr-1"></i> OTKLJUČAJ ZA PREPRAVKU
+                           class="btn btn-warning btn-lg shadow-sm text-dark font-weight-bold mb-2 mb-lg-0 mr-lg-2">
+                            <i class="fas fa-unlock-alt mr-1"></i> OTKLJUČAJ
                         </a>
 
-                        <button type="button"
-                                class="btn btn-outline-danger btn-lg shadow-sm ml-2"
+                        <button type="button" class="btn btn-outline-danger btn-lg shadow-sm"
                                 onclick="confirmFinalize()"
                                 th:disabled="${report == null or report.totalRevenue == null}"
                                 th:if="${not #lists.isEmpty(products) and !editMode}">
@@ -134,18 +68,17 @@
             <div class="container-fluid">
 
                 <form id="mainForm" th:action="@{/entries/save}" method="post">
-                    <div class="card card-outline card-primary shadow-sm">
+
+                    <div class="card card-outline card-primary shadow-sm mb-4">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Radnja:</label>
-                                        <select name="storeId" id="storeSelect" class="form-control" required
-                                                onchange="refreshEntryData()">
+                                        <select name="storeId" id="storeSelect" class="form-control custom-select" required onchange="refreshEntryData()">
                                             <option value="">Izaberi radnju...</option>
                                             <option th:each="store : ${stores}" th:value="${store.id}"
-                                                    th:text="${store.name}"
-                                                    th:selected="${selectedStoreId == store.id}"></option>
+                                                    th:text="${store.name}" th:selected="${selectedStoreId == store.id}"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -158,76 +91,76 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="text-success text-bold">Dnevni Pazar (Total Revenue):</label>
-                                        <div class="input-group">
+                                        <label class="text-success font-weight-bold">Dnevni Pazar (Total Revenue):</label>
+                                        <div class="input-group input-group-lg">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text bg-success text-white"><i class="fas fa-cash-register"></i></span>
+                                                <span class="input-group-text bg-success text-white border-success"><i class="fas fa-cash-register"></i></span>
                                             </div>
                                             <input type="number" step="0.01" min="0" name="totalRevenue"
                                                    th:value="${report != null && report.totalRevenue != null ? report.totalRevenue : ''}"
                                                    th:readonly="${report != null && report.totalRevenue != null && !editMode}"
-                                                   class="form-control form-control-lg text-bold"
+                                                   class="form-control font-weight-bold border-success text-success"
                                                    placeholder="0.00"
-                                                   th:style="${report != null && report.totalRevenue != null && !editMode ? 'background-color: #e9ecef; color: #28a745;' : 'color: #28a745;'}"
+                                                   th:classappend="${report != null && report.totalRevenue != null && !editMode ? 'bg-light' : ''}"
                                                    onkeydown="if(event.keyCode==13){event.preventDefault();}">
-                                            <div class="input-group-append"><span class="input-group-text unit-label">RSD</span>
+                                            <div class="input-group-append">
+                                                <span class="input-group-text font-weight-bold text-muted border-success bg-white">RSD</span>
                                             </div>
                                         </div>
-                                        <small class="text-muted"
-                                               th:if="${report != null && report.totalRevenue != null && !editMode}"><i
-                                                class="fas fa-lock"></i> Pazar je proknjižen i zaključan.</small>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-2">
+                                <div class="col-12 mt-2">
                                     <label>Napomena uz izveštaj (opciono):</label>
                                     <textarea name="note" class="form-control" rows="2"
                                               th:text="${report != null ? report.note : ''}"
                                               th:readonly="${#lists.isEmpty(products) and report != null and report.totalRevenue != null and !editMode}"
-                                              th:style="${#lists.isEmpty(products) and report != null and report.totalRevenue != null and !editMode ? 'background-color: #e9ecef;' : ''}"
+                                              th:classappend="${#lists.isEmpty(products) and report != null and report.totalRevenue != null and !editMode ? 'bg-light' : ''}"
                                               placeholder="Napišite ako je bilo problema..."></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card card-success card-outline shadow-sm mb-4"
-                         th:if="${not #lists.isEmpty(groupedMovements) and !editMode}">
+                    <div class="card card-success card-outline shadow-sm mb-4" th:if="${not #lists.isEmpty(groupedMovements) and !editMode}">
                         <div class="card-header border-0">
-                            <h3 class="card-title text-success text-bold"><i class="fas fa-check-double mr-2"></i>
-                                Današnji promet (Proknjiženo)</h3>
+                            <h3 class="card-title text-success font-weight-bold"><i class="fas fa-check-double mr-2"></i> Današnji promet (Proknjiženo)</h3>
                         </div>
                         <div class="card-body p-0 table-responsive">
-                            <table class="table table-sm table-striped mb-0 text-center table-text-lg">
+                            <table class="table table-sm table-striped mb-0 text-center">
                                 <thead class="bg-light">
                                 <tr>
                                     <th style="text-align: left;" class="pl-3">Artikal</th>
-                                    <th style="width: 150px;">Nabavka (+)</th>
-                                    <th style="width: 150px;">Prodato (-)</th>
-                                    <th style="width: 150px;">Otpis (-)</th>
-                                    <th style="width: 80px;"><i class="fas fa-lock text-muted"></i></th>
+                                    <th style="width: 15%;">Nabavka (+)</th>
+                                    <th style="width: 15%;">Prodato (-)</th>
+                                    <th style="width: 15%;">Povrat (⇄)</th>
+                                    <th style="width: 15%;">Otpis (-)</th>
+                                    <th style="width: 50px;"><i class="fas fa-lock text-muted"></i></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="row : ${groupedMovements}">
                                     <td class="text-left pl-3"><strong th:text="${row.productName}"></strong></td>
+
                                     <td>
-                                        <span th:if="${row.received != null}"
-                                              th:text="${#numbers.formatDecimal(row.received, 1, 3) + ' kg'}"
-                                              class="text-success text-bold"></span>
+                                        <span th:if="${row.received != null}" th:text="${#numbers.formatDecimal(row.received, 1, 3) + ' kg'}" class="text-success font-weight-bold"></span>
                                         <span th:unless="${row.received != null}" class="text-muted">-</span>
                                     </td>
+
                                     <td>
-                                        <span th:if="${row.sold != null}"
-                                              th:text="${#numbers.formatDecimal(row.sold, 1, 3) + ' kg'}"
-                                              class="text-primary text-bold"></span>
+                                        <span th:if="${row.sold != null}" th:text="${#numbers.formatDecimal(row.sold, 1, 3) + ' kg'}" class="text-primary font-weight-bold"></span>
                                         <span th:unless="${row.sold != null}" class="text-muted">-</span>
                                     </td>
+
                                     <td>
-                                        <span th:if="${row.waste != null}"
-                                              th:text="${#numbers.formatDecimal(row.waste, 1, 3) + ' kg'}"
-                                              class="text-danger text-bold"></span>
+                                        <span th:if="${row.returned != null}" th:text="${#numbers.formatDecimal(row.returned, 1, 3) + ' kg'}" class="text-warning font-weight-bold"></span>
+                                        <span th:unless="${row.returned != null}" class="text-muted">-</span>
+                                    </td>
+
+                                    <td>
+                                        <span th:if="${row.waste != null}" th:text="${#numbers.formatDecimal(row.waste, 1, 3) + ' kg'}" class="text-danger font-weight-bold"></span>
                                         <span th:unless="${row.waste != null}" class="text-muted">-</span>
                                     </td>
+
                                     <td><i class="fas fa-check text-success small"></i></td>
                                 </tr>
                                 </tbody>
@@ -237,79 +170,84 @@
 
                     <div class="card shadow-sm" th:if="${not #lists.isEmpty(products)}">
                         <div class="card-header bg-dark">
-                            <h3 class="card-title" th:if="${!editMode}"><i class="fas fa-list mr-2"></i> Artikli koji čekaju na preostali unos</h3>
+                            <h3 class="card-title" th:if="${!editMode}"><i class="fas fa-list mr-2"></i> Artikli za unos</h3>
                             <h3 class="card-title text-warning font-weight-bold" th:if="${editMode}"><i class="fas fa-edit mr-2"></i> Prepravka unetih vrednosti</h3>
                         </div>
                         <div class="card-body p-0 table-responsive">
-                            <table class="table table-bordered table-hover mb-0">
+                            <table class="table table-bordered table-hover table-striped mb-0 text-center" id="entryTable">
                                 <thead class="bg-light">
-                                <tr class="text-center">
-                                    <th style="width: 40%; text-align: left;" class="pl-3">Artikal</th>
-                                    <th style="width: 20%; color: #28a745;">Nabavka (+)</th>
-                                    <th style="width: 20%; color: #007bff;">Prodato (-)</th>
-                                    <th style="width: 20%; color: #dc3545;">Otpis (-)</th>
+                                <tr>
+                                    <th class="text-left align-middle" style="min-width: 150px;">Artikal</th>
+                                    <th class="text-success align-middle" style="width: 18%; min-width: 110px;">Nabavka (+)</th>
+                                    <th class="text-primary align-middle" style="width: 18%; min-width: 110px;">Prodato (-)</th>
+                                    <th class="text-warning align-middle" style="width: 18%; min-width: 110px;">Povrat (⇄)</th>
+                                    <th class="text-danger align-middle" style="width: 18%; min-width: 110px;">Otpis (-)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="product : ${products}">
-                                    <td class="align-middle pl-3">
-                                        <strong th:text="${product.name}" class="table-text-lg"></strong>
+                                    <td class="align-middle text-left pl-3">
+                                        <strong th:text="${product.name}" class="font-weight-bold" style="font-size: 1.1rem;"></strong>
                                         <input type="hidden" name="productIds" th:value="${product.id}">
                                     </td>
 
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle">
                                         <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null and !editMode}">
-                                            <span class="badge badge-light text-success badge-entered shadow-sm">
-                                                <i class="fas fa-check"></i> Uneto
-                                            </span>
-                                            <input type="hidden" name="receivedAmounts"
-                                                   th:value="${movementMap.get(product.id).received}">
+                                            <span class="badge badge-light text-success shadow-sm p-2" style="font-size: 1rem;"><i class="fas fa-check mr-1"></i> Uneto</span>
+                                            <input type="hidden" name="receivedAmounts" th:value="${movementMap.get(product.id).received}">
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null and !editMode}"
-                                             class="input-group">
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).received != null and !editMode}" class="input-group">
                                             <input type="number" step="0.001" min="0" name="receivedAmounts"
-                                                   class="form-control text-center border-0 input-bold-lg"
+                                                   class="form-control text-center font-weight-bold border-success calc-input"
                                                    placeholder="0.000"
                                                    th:value="${movementMap.get(product.id) != null ? movementMap.get(product.id).received : ''}">
-                                            <div class="input-group-append"><span class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
 
-                                    <td class="align-middle text-center">
+                                    <td class="align-middle">
                                         <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null and !editMode}">
-                                            <span class="badge badge-light text-primary badge-entered shadow-sm">
-                                                <i class="fas fa-check"></i> Uneto
-                                            </span>
-                                            <input type="hidden" name="soldAmounts"
-                                                   th:value="${movementMap.get(product.id).sold}">
+                                            <span class="badge badge-light text-primary shadow-sm p-2" style="font-size: 1rem;"><i class="fas fa-check mr-1"></i> Uneto</span>
+                                            <input type="hidden" name="soldAmounts" th:value="${movementMap.get(product.id).sold}">
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null and !editMode}"
-                                             class="input-group">
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).sold != null and !editMode}" class="input-group">
                                             <input type="number" step="0.001" min="0" name="soldAmounts"
-                                                   class="form-control text-center border-0 input-bold-lg"
+                                                   class="form-control text-center font-weight-bold border-primary calc-input"
                                                    placeholder="0.000"
                                                    th:value="${movementMap.get(product.id) != null ? movementMap.get(product.id).sold : ''}">
-                                            <div class="input-group-append"><span class="input-group-text unit-label">kg</span></div>
                                         </div>
                                     </td>
 
-                                    <td class="align-middle text-center">
-                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and !editMode}">
-                                            <span class="badge badge-light text-danger badge-entered shadow-sm">
-                                                <i class="fas fa-check"></i> Uneto
-                                            </span>
-                                            <input type="hidden" name="wasteAmounts"
-                                                   th:value="${movementMap.get(product.id).waste}">
+                                    <td class="align-middle">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).returned != null and !editMode}">
+                                            <span class="badge badge-light text-warning shadow-sm p-2" style="font-size: 1rem;"><i class="fas fa-check mr-1"></i> Uneto</span>
+                                            <input type="hidden" name="returnAmounts" th:value="${movementMap.get(product.id).returned}">
                                         </div>
-                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and !editMode}"
-                                             class="input-group">
-                                            <input type="number" step="0.001" min="0" name="wasteAmounts"
-                                                   class="form-control text-center border-0 input-bold-lg"
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).returned != null and !editMode}" class="input-group">
+                                            <input type="number" step="0.001" min="0" name="returnAmounts"
+                                                   class="form-control text-center font-weight-bold border-warning calc-input"
                                                    placeholder="0.000"
-                                                   th:value="${movementMap.get(product.id) != null ? movementMap.get(product.id).waste : ''}">
-                                            <div class="input-group-append"><span class="input-group-text unit-label">kg</span></div>
+                                                   th:value="${movementMap.get(product.id) != null ? movementMap.get(product.id).returned : ''}">
                                         </div>
                                     </td>
+
+                                    <td class="align-middle">
+                                        <div th:if="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and !editMode}">
+                                            <span class="badge badge-light text-danger shadow-sm p-2" style="font-size: 1rem;"><i class="fas fa-check mr-1"></i> Uneto</span>
+                                            <input type="hidden" name="wasteAmounts" th:value="${movementMap.get(product.id).waste}">
+                                        </div>
+                                        <div th:unless="${movementMap.get(product.id) != null and movementMap.get(product.id).waste != null and !editMode}">
+                                            <div class="input-group mb-1">
+                                                <input type="number" step="0.001" min="0" name="wasteAmounts"
+                                                       class="form-control text-center font-weight-bold border-danger"
+                                                       placeholder="0.000"
+                                                       th:value="${movementMap.get(product.id) != null ? movementMap.get(product.id).waste : ''}">
+                                            </div>
+                                            <small class="waste-suggestion d-block font-weight-bold text-muted" style="font-size: 0.85rem;">
+                                                Preporuka: 0.000
+                                            </small>
+                                        </div>
+                                    </td>
+
                                 </tr>
                                 </tbody>
                             </table>
@@ -346,11 +284,59 @@
         }
     }
 
+    // Zabrana submitovanja na Enter dugme na tastaturi
     document.addEventListener('keydown', function (event) {
         if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
             event.preventDefault();
             return false;
         }
+    });
+
+    // DINAMIČKA KALKULACIJA PREPORUKE ZA OTPIS (KALO)
+    // Slušamo svaku promenu u poljima koja imaju klasu "calc-input"
+    document.addEventListener('input', function (event) {
+        if (event.target.classList.contains('calc-input')) {
+            const row = event.target.closest('tr');
+            calculateWasteSuggestion(row);
+        }
+    });
+
+    function calculateWasteSuggestion(row) {
+        // Hvatamo input polja iz trenutnog reda
+        const receivedInput = row.querySelector('input[name="receivedAmounts"]');
+        const soldInput = row.querySelector('input[name="soldAmounts"]');
+        const returnInput = row.querySelector('input[name="returnAmounts"]');
+        const wasteInput = row.querySelector('input[name="wasteAmounts"]');
+        const suggestionBox = row.querySelector('.waste-suggestion');
+
+        // Ako polje za otpis ne postoji (zaključano je jer je uneto ranije), preskačemo
+        if (!suggestionBox || !wasteInput) return;
+
+        // Pretvaramo unos u broj. Ako je prazno polje (NaN), računamo ga kao 0
+        const received = parseFloat(receivedInput?.value) || 0;
+        const sold = parseFloat(soldInput?.value) || 0;
+        const ret = parseFloat(returnInput?.value) || 0;
+
+        // Tvoja formula: Nabavka - Prodato - Povrat
+        let suggestedWaste = received - sold - ret;
+
+        // Prikaz rezultata sa odgovarajućim bojama
+        if (suggestedWaste !== 0) {
+            suggestionBox.textContent = `Preporuka: ${suggestedWaste.toFixed(3)}`;
+            // Crvena boja ako je > 0 ili < 0
+            suggestionBox.className = 'waste-suggestion d-block font-weight-bold text-danger';
+        } else {
+            suggestionBox.textContent = `Preporuka: 0.000`;
+            // Siva boja ako je 0
+            suggestionBox.className = 'waste-suggestion d-block font-weight-bold text-muted';
+        }
+    }
+
+    // Kada se stranica tek učita (npr. ušli smo u Prepravku i već imamo neke brojeve),
+    // pozivamo kalkulaciju na svakom redu kako bi se prikazale tačne preporuke od starta.
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('#entryTable tbody tr');
+        rows.forEach(row => calculateWasteSuggestion(row));
     });
 </script>
 </body>

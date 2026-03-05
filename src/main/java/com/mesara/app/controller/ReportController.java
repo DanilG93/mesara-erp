@@ -60,7 +60,7 @@ public class ReportController {
             List<CategoryReportDTO> catData = reportService.getCategoryTurnover(storeIds, productIds, start, end);
             model.addAttribute("categoryData", catData);
 
-            // 2. NOVO: Detaljni podaci za "crtice" u grafikonu (po radnjama)
+            // 2. Detaljni podaci za "crtice" u grafikonu (po radnjama)
             var contributions = reportService.getStoreContributions(storeIds, productIds, start, end);
             model.addAttribute("storeContributions", contributions);
 
@@ -88,6 +88,7 @@ public class ReportController {
             @RequestParam("purchaseImg") String purchaseImg,
             @RequestParam("salesImg") String salesImg,
             @RequestParam("wasteImg") String wasteImg,
+            @RequestParam("returnImg") String returnImg,
             @RequestParam("barChartImg") String barChartImg) {
 
         // 1. Sređivanje datuma (identično kao u GET metodi)
@@ -114,14 +115,15 @@ public class ReportController {
             data.put("topProducts", reportData.stream().limit(3).toList());
         }
 
-        // 5. Ubacivanje Base64 slika grafikona
+        // 5. Ubacivanje Base64 slika grafikona u mapu za PDF generator
         data.put("purchaseImg", purchaseImg);
         data.put("salesImg", salesImg);
         data.put("wasteImg", wasteImg);
+        data.put("returnImg", returnImg); // 2. DODATO: Slanje slike povrata u PDF šablon
         data.put("barChartImg", barChartImg);
 
         // 6. Generisanje PDF-a
-        byte[] pdfBytes = pdfService.generatePdf("pdf-report", data);
+        byte[] pdfBytes = pdfService.generatePdf("pdf-report", data); // pretpostavljam da je naziv tvog templejta pdf-report ili report_pdf (ako pukne, proveri naziv)
 
         // 7. Vraćanje PDF fajla korisniku
         return ResponseEntity.ok()
@@ -129,6 +131,4 @@ public class ReportController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
-
-
 }

@@ -75,9 +75,10 @@
             table-layout: fixed;
             margin-bottom: 3mm;
         }
+        /* IZMENJENO: Sada je 25% širine pošto imamo 4 Pie grafika umesto 3 */
         .col-3 {
             display: table-cell;
-            width: 33.33%;
+            width: 25%;
             text-align: center;
             vertical-align: middle;
         }
@@ -100,7 +101,7 @@
             margin-bottom: 3mm;
         }
         .bar-chart-img {
-            max-height: 80mm; /* Povećano po tvojoj želji */
+            max-height: 80mm;
             width: auto;
             max-width: 100%;
             display: block;
@@ -114,22 +115,23 @@
         }
         .table-title {
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             text-transform: uppercase;
-            margin: 0 0 4px 0;
+            margin: 0 0 3px 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 10px;
         }
         thead { display: table-header-group; }
         tr { page-break-inside: avoid !important; }
         th, td { border: 1px solid #dee2e6; padding: 5px; text-align: center; }
         th { background-color: #343a40; color: white; text-transform: uppercase; }
         .text-left { text-align: left; font-weight: bold; }
+        .text-warning { color: #d39e00; } /* Klasa za narandžasti tekst u PDF-u */
         .tfoot-row td { background-color: #e9ecef; font-weight: bold; color: black; }
     </style>
 </head>
@@ -194,6 +196,10 @@
         <img th:src="${salesImg}" class="chart-img"/>
     </div>
     <div class="col-3">
+        <div class="chart-title">UDEO POVRATA</div>
+        <img th:src="${returnImg}" class="chart-img"/>
+    </div>
+    <div class="col-3">
         <div class="chart-title">UDEO OTPISA</div>
         <img th:src="${wasteImg}" class="chart-img"/>
     </div>
@@ -212,6 +218,7 @@
             <th class="text-left">ARTIKAL</th>
             <th>NABAVKA</th>
             <th>PRODATO</th>
+            <th>POVRAT</th>
             <th>OTPIS</th>
             <th>STANJE</th>
         </tr>
@@ -221,19 +228,19 @@
             <td class="text-left" th:text="${row.productName}"></td>
             <td th:text="${utils.format(row.received)} + ' kg'"></td>
             <td th:text="${utils.format(row.sold)} + ' kg'"></td>
-            <td th:text="${utils.format(row.waste)} + ' kg'"></td>
-            <td th:with="b=${row.received - (row.sold + row.waste)}"
+            <td th:text="${utils.format(row.returned)} + ' kg'" class="text-warning"></td> <td th:text="${utils.format(row.waste)} + ' kg'"></td>
+            <td th:with="b=${row.received - (row.sold + row.waste + row.returned)}"
                 th:text="${utils.format(b)} + ' kg'"
                 th:style="${b < 0 ? 'color: red;' : (b > 0 ? 'color: green;' : '')}"></td>
         </tr>
         </tbody>
         <tfoot>
-        <tr class="tfoot-row" th:with="tU=${#aggregates.sum(reportData.![received])}, tP=${#aggregates.sum(reportData.![sold])}, tO=${#aggregates.sum(reportData.![waste])}">
+        <tr class="tfoot-row" th:with="tU=${#aggregates.sum(reportData.![received])}, tP=${#aggregates.sum(reportData.![sold])}, tR=${#aggregates.sum(reportData.![returned])}, tO=${#aggregates.sum(reportData.![waste])}">
             <td class="text-left">UKUPNO:</td>
             <td th:text="${utils.format(tU)} + ' kg'"></td>
             <td th:text="${utils.format(tP)} + ' kg'"></td>
-            <td th:text="${utils.format(tO)} + ' kg'"></td>
-            <td th:text="${utils.format(tU - (tP + tO))} + ' kg'"></td>
+            <td th:text="${utils.format(tR)} + ' kg'" class="text-warning"></td> <td th:text="${utils.format(tO)} + ' kg'"></td>
+            <td th:text="${utils.format(tU - (tP + tR + tO))} + ' kg'"></td>
         </tr>
         </tfoot>
     </table>

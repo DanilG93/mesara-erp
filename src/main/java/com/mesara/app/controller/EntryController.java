@@ -34,14 +34,14 @@ public class EntryController {
     public String showEntryPage(
             @RequestParam(required = false) Long storeId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
-            @RequestParam(required = false, defaultValue = "false") boolean edit, // NOVO: Hvata edit parametar
+            @RequestParam(required = false, defaultValue = "false") boolean edit,
             Model model) {
 
         model.addAttribute("stores", storeService.getAllActive());
         LocalDate date = (reportDate != null) ? reportDate : LocalDate.now();
         model.addAttribute("selectedDate", date);
         model.addAttribute("selectedStoreId", storeId);
-        model.addAttribute("editMode", edit); // NOVO: Prosleđujemo Thymeleaf-u da li smo u edit modu
+        model.addAttribute("editMode", edit);
 
         if (storeId != null) {
             Store store = storeService.getById(storeId);
@@ -53,7 +53,6 @@ public class EntryController {
                 Map<Long, MovementRowDTO> movementMap = entryService.getMovementMap(report);
                 model.addAttribute("movementMap", movementMap);
 
-                // NOVO: Ako je edit=true, prikazujemo SVE artikle u donjoj tabeli
                 List<Product> productsToShow;
                 if (edit) {
                     productsToShow = productService.getAllActive();
@@ -64,7 +63,8 @@ public class EntryController {
                                 MovementRowDTO status = movementMap.get(p.getId());
                                 return status.getReceived() == null ||
                                         status.getSold() == null ||
-                                        status.getWaste() == null;
+                                        status.getWaste() == null ||
+                                        status.getReturned() == null; // NOVO: Proveravamo i povrat
                             })
                             .toList();
                 }
@@ -90,10 +90,11 @@ public class EntryController {
             @RequestParam(required = false) List<Long> productIds,
             @RequestParam(required = false) List<BigDecimal> receivedAmounts,
             @RequestParam(required = false) List<BigDecimal> soldAmounts,
-            @RequestParam(required = false) List<BigDecimal> wasteAmounts) {
+            @RequestParam(required = false) List<BigDecimal> wasteAmounts,
+            @RequestParam(required = false) List<BigDecimal> returnAmounts) { // NOVO
 
         entryService.saveDailyReport(storeId, reportDate, totalRevenue, note,
-                productIds, receivedAmounts, soldAmounts, wasteAmounts);
+                productIds, receivedAmounts, soldAmounts, wasteAmounts, returnAmounts); // Dodato slanje returnAmounts
 
         return "redirect:/entries?storeId=" + storeId + "&reportDate=" + reportDate + "&success=true";
     }

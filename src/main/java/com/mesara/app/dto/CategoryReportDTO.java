@@ -11,5 +11,6 @@ public class CategoryReportDTO {
     private BigDecimal totalReceived;
     private BigDecimal totalSold;
     private BigDecimal totalWaste;
+    private BigDecimal totalReturned;
     private Long lastId;
 }

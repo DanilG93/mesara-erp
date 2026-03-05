@@ -21,6 +21,27 @@
                 <a href="#" class="nav-link font-weight-bold">MESARA ERP v1.0</a>
             </li>
         </ul>
+
+        <ul class="navbar-nav ml-auto d-md-none" th:if="${currentUri != null && currentUri.startsWith('/entries')}">
+
+            <li class="nav-item" th:if="${not #lists.isEmpty(products) or editMode}">
+                <a href="javascript:void(0)" onclick="document.getElementById('mainForm').submit();" class="nav-link text-success px-2">
+                    <i class="fas fa-save fa-lg"></i>
+                </a>
+            </li>
+
+            <li class="nav-item" th:if="${report != null && !editMode}">
+                <a th:href="@{/entries(storeId=${selectedStoreId}, reportDate=${selectedDate}, edit=true)}" class="nav-link text-warning px-2">
+                    <i class="fas fa-unlock-alt fa-lg"></i>
+                </a>
+            </li>
+
+            <li class="nav-item" th:if="${not #lists.isEmpty(products) && !editMode}">
+                <a href="javascript:void(0)" onclick="confirmFinalize()" class="nav-link text-danger px-2">
+                    <i class="fas fa-flag-checkered fa-lg"></i>
+                </a>
+            </li>
+        </ul>
     </nav>
 </div>
 </body>

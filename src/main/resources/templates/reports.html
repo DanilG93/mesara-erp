@@ -20,8 +20,7 @@
                 <div class="row mb-3">
                     <div class="col-sm-12 text-center text-md-left">
                         <h2 class="m-0 font-weight-bold">
-                            <i class="fas fa-file-invoice-dollar text-primary mr-2 d-print-none"></i>Izveštaj o
-                            Analitici Poslovanja
+                            <i class="fas fa-file-invoice-dollar text-primary mr-2 d-print-none"></i>Izveštaj
                         </h2>
                     </div>
                 </div>
@@ -112,50 +111,49 @@
 
                     <input type="hidden" name="purchaseImg" id="purchaseImgInput">
                     <input type="hidden" name="salesImg" id="salesImgInput">
-                    <input type="hidden" name="wasteImg" id="wasteImgInput">
+                    <input type="hidden" name="returnImg" id="returnImgInput"> <input type="hidden" name="wasteImg" id="wasteImgInput">
                     <input type="hidden" name="barChartImg" id="barChartImgInput">
                 </form>
 
                 <div th:if="${reportData != null}" class="report-content-container">
+
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header bg-success text-white py-2"><h3
-                                        class="card-title text-sm font-weight-bold m-0">Udeo Nabavke</h3></div>
+                                <div class="card-header bg-success text-white py-2"><h3 class="card-title text-sm font-weight-bold m-0">Udeo Nabavke</h3></div>
                                 <div class="card-body">
-                                    <div class="chart-container-pie" style="height: 200px;">
-                                        <canvas id="purchasePie"></canvas>
-                                    </div>
+                                    <div class="chart-container-pie" style="height: 200px;"><canvas id="purchasePie"></canvas></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header bg-primary text-white py-2"><h3
-                                        class="card-title text-sm font-weight-bold m-0">Udeo Prodaje</h3></div>
+                                <div class="card-header bg-primary text-white py-2"><h3 class="card-title text-sm font-weight-bold m-0">Udeo Prodaje</h3></div>
                                 <div class="card-body">
-                                    <div class="chart-container-pie" style="height: 200px;">
-                                        <canvas id="salesPie"></canvas>
-                                    </div>
+                                    <div class="chart-container-pie" style="height: 200px;"><canvas id="salesPie"></canvas></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header bg-danger text-white py-2"><h3
-                                        class="card-title text-sm font-weight-bold m-0">Udeo Otpisa</h3></div>
+                                <div class="card-header bg-warning text-dark py-2"><h3 class="card-title text-sm font-weight-bold m-0">Udeo Povrata</h3></div>
                                 <div class="card-body">
-                                    <div class="chart-container-pie" style="height: 200px;">
-                                        <canvas id="wastePie"></canvas>
-                                    </div>
+                                    <div class="chart-container-pie" style="height: 200px;"><canvas id="returnPie"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header bg-danger text-white py-2"><h3 class="card-title text-sm font-weight-bold m-0">Udeo Otpisa</h3></div>
+                                <div class="card-body">
+                                    <div class="chart-container-pie" style="height: 200px;"><canvas id="wastePie"></canvas></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header bg-white py-2"><h3 class="card-title font-weight-bold m-0">Udeo radnji u
-                            prometu artikala (kg)</h3></div>
+                        <div class="card-header bg-white py-2"><h3 class="card-title font-weight-bold m-0">Udeo radnji u prometu artikala (kg)</h3></div>
                         <div class="card-body">
                             <div class="position-relative w-100" style="height: 450px;">
                                 <canvas id="groupedChart"></canvas>
@@ -176,6 +174,7 @@
                                     <th class="text-left align-middle">ARTIKAL</th>
                                     <th class="align-middle">NABAVKA</th>
                                     <th class="align-middle">PRODATO</th>
+                                    <th class="align-middle text-warning">POVRAT</th>
                                     <th class="align-middle">OTPIS</th>
                                     <th class="align-middle">STANJE</th>
                                 </tr>
@@ -184,14 +183,12 @@
                                 <tr th:each="row : ${reportData}">
                                     <td class="text-left font-weight-bold align-middle"
                                         th:text="${row.productName}"></td>
-                                    <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(row.received, 1, 2)} + ' kg'"></td>
-                                    <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(row.sold, 1, 2)} + ' kg'"></td>
-                                    <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(row.waste, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(row.received, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(row.sold, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle text-warning font-weight-bold" th:text="${#numbers.formatDecimal(row.returned, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(row.waste, 1, 2)} + ' kg'"></td>
                                     <td class="align-middle font-weight-bold"
-                                        th:with="stanje=${row.received - (row.sold + row.waste)}"
+                                        th:with="stanje=${row.received - (row.sold + row.waste + row.returned)}"
                                         th:text="${#numbers.formatDecimal(stanje, 1, 2)} + ' kg'"
                                         th:classappend="${stanje < 0 ? 'text-danger' : 'text-success'}">
                                     </td>
@@ -199,16 +196,16 @@
                                 </tbody>
                                 <tfoot class="bg-dark text-white font-weight-bold text-uppercase">
                                 <tr th:with="sumR=${#aggregates.sum(reportData.![received])},
-                             sumS=${#aggregates.sum(reportData.![sold])},
-                             sumW=${#aggregates.sum(reportData.![waste])}">
+                                             sumS=${#aggregates.sum(reportData.![sold])},
+                                             sumW=${#aggregates.sum(reportData.![waste])},
+                                             sumRet=${#aggregates.sum(reportData.![returned])}">
                                     <td class="text-left align-middle">UKUPNO:</td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(sumR, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(sumS, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle text-warning" th:text="${#numbers.formatDecimal(sumRet, 1, 2)} + ' kg'"></td>
+                                    <td class="align-middle" th:text="${#numbers.formatDecimal(sumW, 1, 2)} + ' kg'"></td>
                                     <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(sumR, 1, 2)} + ' kg'"></td>
-                                    <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(sumS, 1, 2)} + ' kg'"></td>
-                                    <td th:text="${#numbers.formatDecimal(sumW, 1, 2)} + ' kg'"></td>
-                                    <td class="align-middle"
-                                        th:text="${#numbers.formatDecimal(sumR - (sumS + sumW), 1, 2)} + ' kg'"></td>
+                                        th:text="${#numbers.formatDecimal(sumR - (sumS + sumW + sumRet), 1, 2)} + ' kg'"></td>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -229,23 +226,23 @@
     function selectAll(name) { document.querySelectorAll('input[name="' + name + '"]').forEach(el => el.checked = true); }
     function deselectAll(name) { document.querySelectorAll('input[name="' + name + '"]').forEach(el => el.checked = false); }
 
-    // NOVA FUNKCIJA KOJA SAKUPLJA SLIKE I ŠALJE IH NA SERVER
     function downloadPdf() {
-        // Pretvaramo kanvase u Base64 slike
         document.getElementById('purchaseImgInput').value = document.getElementById('purchasePie').toDataURL('image/png');
         document.getElementById('salesImgInput').value = document.getElementById('salesPie').toDataURL('image/png');
         document.getElementById('wasteImgInput').value = document.getElementById('wastePie').toDataURL('image/png');
+        document.getElementById('returnImgInput').value = document.getElementById('returnPie').toDataURL('image/png');
         document.getElementById('barChartImgInput').value = document.getElementById('groupedChart').toDataURL('image/png');
 
-        // Submittujemo skrivenu formu
         document.getElementById('pdfExportForm').submit();
     }
 
     $(document).ready(function() {
-            const catData = [[${categoryData}]];
-        if (catData) {
+        const catData = [[${categoryData}]];
+
+        if (catData && catData.length > 0) { // Provera da li uopšte imamo podatke
             const labels = catData.map(d => d.categoryName);
             const colors = ['#28a745', '#007bff', '#dc3545', '#ffc107', '#17a2b8', '#6610f2'];
+
             const config = (data) => ({
                 type: 'doughnut',
                 data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
@@ -255,14 +252,19 @@
                     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }}
                 }
             });
-            new Chart(document.getElementById('purchasePie'), config(catData.map(d => d.totalReceived)));
-            new Chart(document.getElementById('salesPie'), config(catData.map(d => d.totalSold)));
-            new Chart(document.getElementById('wastePie'), config(catData.map(d => d.totalWaste)));
+
+            new Chart(document.getElementById('purchasePie'), config(catData.map(d => d.totalReceived || 0)));
+            new Chart(document.getElementById('salesPie'), config(catData.map(d => d.totalSold || 0)));
+            new Chart(document.getElementById('wastePie'), config(catData.map(d => d.totalWaste || 0)));
+
+            // OVO JE POPRAVLJENO: Sada čita totalReturned i ako je null stavlja 0
+            new Chart(document.getElementById('returnPie'), config(catData.map(d => d.totalReturned || 0)));
         }
 
         const labels = [[${labels}]];
         const contributions = [[${storeContributions}]];
         const storeNames = [[${uniqueStoreNames}]];
+
         if (labels && labels.length > 0) {
             const ctx = document.getElementById('groupedChart').getContext('2d');
             const findVal = (store, product, type) => {
@@ -273,9 +275,10 @@
             const datasets = [];
             storeNames.forEach((store, index) => {
                 const opacity = 1 - (index * 0.15);
-                datasets.push({ label: store + ' (U)', data: labels.map(l => findVal(store, l, 'received')), backgroundColor: `rgba(40, 167, 69, ${opacity})`, stack: '0' });
+                datasets.push({ label: store + ' (N)', data: labels.map(l => findVal(store, l, 'received')), backgroundColor: `rgba(40, 167, 69, ${opacity})`, stack: '0' });
                 datasets.push({ label: store + ' (P)', data: labels.map(l => findVal(store, l, 'sold')), backgroundColor: `rgba(0, 123, 255, ${opacity})`, stack: '1' });
                 datasets.push({ label: store + ' (O)', data: labels.map(l => findVal(store, l, 'waste')), backgroundColor: `rgba(220, 53, 69, ${opacity})`, stack: '2' });
+                datasets.push({ label: store + ' (Povrat)', data: labels.map(l => findVal(store, l, 'returned')), backgroundColor: `rgba(255, 193, 7, ${opacity})`, stack: '3' });
             });
 
             const displayLabels = labels.map(l => l.length > 30 ? l.substring(0, 30) + '...' : l);

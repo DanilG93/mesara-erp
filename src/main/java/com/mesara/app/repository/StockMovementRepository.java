@@ -22,6 +22,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             "SUM(CASE WHEN sm.type = 'PURCHASE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'SALE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'WASTE' THEN sm.quantity ELSE 0 END), " +
+            "SUM(CASE WHEN sm.type = 'RETURN' THEN sm.quantity ELSE 0 END), " +
             "MAX(sm.id)) " +
             "FROM StockMovement sm " +
             "JOIN sm.product p " +
@@ -37,10 +38,12 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             @Param("start") LocalDate start,
             @Param("end") LocalDate end);
 
+    // NOVO: Dodat RETURN za StoreContributionDTO
     @Query("SELECT new com.mesara.app.dto.StoreContributionDTO(p.name, s.name, " +
             "SUM(CASE WHEN sm.type = 'PURCHASE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'SALE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'WASTE' THEN sm.quantity ELSE 0 END), " +
+            "SUM(CASE WHEN sm.type = 'RETURN' THEN sm.quantity ELSE 0 END), " +
             "MAX(sm.id)) " +
             "FROM StockMovement sm JOIN sm.product p JOIN sm.store s JOIN sm.report r " +
             "WHERE s.id IN :storeIds AND p.id IN :productIds AND r.reportDate BETWEEN :start AND :end " +
@@ -51,10 +54,12 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             @Param("start") LocalDate start,
             @Param("end") LocalDate end);
 
+    // NOVO: Dodat RETURN za CategoryReportDTO
     @Query("SELECT new com.mesara.app.dto.CategoryReportDTO(p.category.name, " +
             "SUM(CASE WHEN sm.type = 'PURCHASE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'SALE' THEN sm.quantity ELSE 0 END), " +
             "SUM(CASE WHEN sm.type = 'WASTE' THEN sm.quantity ELSE 0 END), " +
+            "SUM(CASE WHEN sm.type = 'RETURN' THEN sm.quantity ELSE 0 END), " +
             "MAX(sm.id)) " +
             "FROM StockMovement sm JOIN sm.product p JOIN sm.report r " +
             "WHERE sm.store.id IN :storeIds AND p.id IN :productIds AND r.reportDate BETWEEN :start AND :end " +
@@ -64,6 +69,4 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             @Param("productIds") List<Long> productIds,
             @Param("start") LocalDate start,
             @Param("end") LocalDate end);
-
-
 }

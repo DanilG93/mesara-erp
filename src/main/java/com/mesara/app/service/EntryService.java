@@ -41,7 +41,6 @@ public class EntryService {
                         entry -> {
                             List<StockMovement> productMovements = entry.getValue();
 
-                            // Nalazimo maxId za DTO
                             Long maxId = productMovements.stream()
                                     .mapToLong(StockMovement::getId)
                                     .max().orElse(0L);
@@ -61,8 +60,14 @@ public class EntryService {
                                     .map(StockMovement::getQuantity)
                                     .reduce(BigDecimal::add).orElse(null);
 
-                            return new MovementRowDTO(productMovements.get(0).getProduct().getName(),
-                                    received, sold, waste, maxId);
+                            // NOVO: Dodat povrat
+                            BigDecimal returned = productMovements.stream()
+                                    .filter(m -> m.getType() == MovementType.RETURN)
+                                    .map(StockMovement::getQuantity)
+                                    .reduce(BigDecimal::add).orElse(null);
+
+                            return new MovementRowDTO(productMovements.getFirst().getProduct().getName(),
+                                    received, sold, waste, returned, maxId);
                         }
                 ));
     }
@@ -70,7 +75,7 @@ public class EntryService {
     @Transactional
     public void saveDailyReport(Long storeId, LocalDate reportDate, BigDecimal totalRevenue, String note,
                                 List<Long> productIds, List<BigDecimal> received,
-                                List<BigDecimal> sold, List<BigDecimal> waste) {
+                                List<BigDecimal> sold, List<BigDecimal> waste, List<BigDecimal> returns) {
 
         Store store = storeService.getById(storeId);
         DailyStoreReport report = reportRepository.findByStoreAndReportDate(store, reportDate)
@@ -98,10 +103,12 @@ public class EntryService {
                 BigDecimal r = (received != null && i < received.size()) ? received.get(i) : null;
                 BigDecimal s = (sold != null && i < sold.size()) ? sold.get(i) : null;
                 BigDecimal w = (waste != null && i < waste.size()) ? waste.get(i) : null;
+                BigDecimal ret = (returns != null && i < returns.size()) ? returns.get(i) : null; // NOVO
 
                 processMovement(product, store, r, MovementType.PURCHASE, report);
                 processMovement(product, store, s, MovementType.SALE, report);
                 processMovement(product, store, w, MovementType.WASTE, report);
+                processMovement(product, store, ret, MovementType.RETURN, report); // NOVO
             }
         }
     }
@@ -109,26 +116,20 @@ public class EntryService {
     private void processMovement(Product p, Store s, BigDecimal qty, MovementType type, DailyStoreReport report) {
         if (qty != null && qty.compareTo(BigDecimal.ZERO) >= 0) {
 
-            // Tražimo da li već postoji snimljena stavka za ovaj artikal i ovaj tip u ovom izveštaju
             StockMovement existingMovement = movementRepository.findByReport(report).stream()
                     .filter(m -> m.getProduct().getId().equals(p.getId()) && m.getType() == type)
                     .findFirst()
                     .orElse(null);
 
             if (existingMovement != null) {
-                // AKO POSTOJI: Znači da radimo PREPRAVKU (UPDATE)
                 BigDecimal oldQty = existingMovement.getQuantity();
 
-                // Menjamo samo ako se količina stvarno promenila
                 if (oldQty.compareTo(qty) != 0) {
-                    // Računamo razliku (npr. bilo 10, novo 15 -> razlika je +5)
                     BigDecimal diff = qty.subtract(oldQty);
 
-                    // 1. Ažuriraj istoriju (StockMovement)
                     existingMovement.setQuantity(qty);
                     movementRepository.save(existingMovement);
 
-                    // 2. Ažuriraj trenutni lager
                     ProductStock stock = stockRepository.findByStoreAndProduct(s, p).orElse(new ProductStock());
                     if (stock.getId() == null) {
                         stock.setStore(s);
@@ -137,14 +138,14 @@ public class EntryService {
                     }
 
                     if (type == MovementType.PURCHASE) {
-                        stock.setQuantity(stock.getQuantity().add(diff)); // Nabavka dodaje
+                        stock.setQuantity(stock.getQuantity().add(diff));
                     } else {
-                        stock.setQuantity(stock.getQuantity().subtract(diff)); // Prodaja i otpis oduzimaju
+                        // Prodaja, Otpis i POVRAT ovde oduzimaju zalihe
+                        stock.setQuantity(stock.getQuantity().subtract(diff));
                     }
                     stockRepository.save(stock);
                 }
             } else {
-                // AKO NE POSTOJI: Radimo CREATE (tvoja stara logika)
                 StockMovement m = new StockMovement();
                 m.setProduct(p);
                 m.setStore(s);
@@ -166,6 +167,7 @@ public class EntryService {
                     if (type == MovementType.PURCHASE) {
                         stock.setQuantity(stock.getQuantity().add(qty));
                     } else {
+                        // Oduzimanje za ostale tipove pa i za RETURN
                         stock.setQuantity(stock.getQuantity().subtract(qty));
                     }
                     stockRepository.save(stock);
@@ -181,7 +183,7 @@ public class EntryService {
                 .collect(Collectors.groupingBy(m -> m.getProduct().getId()))
                 .values().stream()
                 .map(productMovements -> {
-                    String name = productMovements.get(0).getProduct().getName();
+                    String name = productMovements.getFirst().getProduct().getName();
 
                     Long maxId = productMovements.stream()
                             .mapToLong(StockMovement::getId)
@@ -202,9 +204,14 @@ public class EntryService {
                             .map(StockMovement::getQuantity)
                             .reduce(BigDecimal::add).orElse(null);
 
-                    return new MovementRowDTO(name, received, sold, waste, maxId);
+                    // NOVO:
+                    BigDecimal returned = productMovements.stream()
+                            .filter(m -> m.getType() == MovementType.RETURN)
+                            .map(StockMovement::getQuantity)
+                            .reduce(BigDecimal::add).orElse(null);
+
+                    return new MovementRowDTO(name, received, sold, waste, returned, maxId);
                 })
-                // SORTIRANJE: Poslednji ID (najnoviji unos) ide na vrh
                 .sorted(Comparator.comparing(MovementRowDTO::getLastId).reversed())
                 .collect(Collectors.toList());
     }
@@ -225,6 +232,7 @@ public class EntryService {
                 processMovement(product, store, BigDecimal.ZERO, MovementType.PURCHASE, report);
                 processMovement(product, store, BigDecimal.ZERO, MovementType.SALE, report);
                 processMovement(product, store, BigDecimal.ZERO, MovementType.WASTE, report);
+                processMovement(product, store, BigDecimal.ZERO, MovementType.RETURN, report); // NOVO
             } else {
                 if (currentStatus.getReceived() == null)
                     processMovement(product, store, BigDecimal.ZERO, MovementType.PURCHASE, report);
@@ -232,6 +240,8 @@ public class EntryService {
                     processMovement(product, store, BigDecimal.ZERO, MovementType.SALE, report);
                 if (currentStatus.getWaste() == null)
                     processMovement(product, store, BigDecimal.ZERO, MovementType.WASTE, report);
+                if (currentStatus.getReturned() == null)
+                    processMovement(product, store, BigDecimal.ZERO, MovementType.RETURN, report); // NOVO
             }
         }
     }
