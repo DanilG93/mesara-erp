@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.domain.DailyStoreReport;
 import com.mesara.app.domain.Product;
@@ -24,7 +24,7 @@ import java.util.Map;
 @Controller
 @AllArgsConstructor
 @RequestMapping({"/", "/entries"})
-public class EntryController {
+public class EntryWebController {
 
     private final EntryService entryService;
     private final StoreService storeService;
