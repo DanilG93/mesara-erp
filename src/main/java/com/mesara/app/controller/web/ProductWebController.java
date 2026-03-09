@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.domain.Product;
 import com.mesara.app.service.CategoryService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @AllArgsConstructor
 @RequestMapping("/products")
-public class ProductController {
+public class ProductWebController {
 
     private final ProductService productService;
     private final CategoryService categoryService;

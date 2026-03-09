@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.domain.Store;
 import com.mesara.app.service.StockService;
@@ -15,7 +15,7 @@ import java.util.List;
 @Controller
 @AllArgsConstructor
 @RequestMapping("/inventory")
-public class InventoryController {
+public class InventoryWebController {
 
     private final StockService stockService;
     private final StoreService storeService;

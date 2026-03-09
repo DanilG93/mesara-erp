@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.domain.Store;
 import com.mesara.app.service.StoreService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @AllArgsConstructor
 @RequestMapping("/stores")
-public class StoreController {
+public class StoreWebController {
 
     private final StoreService storeService;
 

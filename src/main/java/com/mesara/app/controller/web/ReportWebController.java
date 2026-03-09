@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.dto.CategoryReportDTO;
 import com.mesara.app.dto.MovementRowDTO;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/reports")
 @AllArgsConstructor
-public class ReportController {
+public class ReportWebController {
 
     private final ReportService reportService;
     private final StoreService storeService;

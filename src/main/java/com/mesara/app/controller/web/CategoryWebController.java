@@ -1,4 +1,4 @@
-package com.mesara.app.controller;
+package com.mesara.app.controller.web;
 
 import com.mesara.app.domain.Category;
 import com.mesara.app.service.CategoryService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @AllArgsConstructor
 @RequestMapping("/categories")
-public class CategoryController {
+public class CategoryWebController {
 
     private final CategoryService categoryService;
 
