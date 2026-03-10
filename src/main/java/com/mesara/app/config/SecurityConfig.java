@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
+                .httpBasic(org.springframework.security.config.Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
                         .permitAll()
