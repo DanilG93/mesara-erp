@@ -13,7 +13,6 @@ public class StockMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // DODAJ OVO: Ovo je veza sa pazarom i datumom izveštaja
     @ManyToOne
     @JoinColumn(name = "report_id")
     private DailyStoreReport report;
@@ -33,7 +32,7 @@ public class StockMovement {
     private MovementType type;
 
     @Column(nullable = true, precision = 10, scale = 2)
-    private BigDecimal price; // Cena po kojoj je prodato (može biti null)
+    private BigDecimal price;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
