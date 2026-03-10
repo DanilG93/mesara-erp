@@ -40,7 +40,7 @@ public class CategoryWebController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
-        categoryService.delete(id);
+        categoryService.softDelete(id);
         return "redirect:/categories";
     }
 }
