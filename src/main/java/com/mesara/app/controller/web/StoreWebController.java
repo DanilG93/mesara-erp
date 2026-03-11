@@ -28,7 +28,7 @@ public class StoreWebController {
 
     @PostMapping("/save")
     public String saveStore(@ModelAttribute("store") Store store) {
-        storeService.saveStore(store);
+        storeService.save(store);
         return "redirect:/stores";
     }
 

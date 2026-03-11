@@ -1,6 +1,7 @@
 package com.mesara.app.service;
 
 import com.mesara.app.domain.Store;
+import com.mesara.app.exception.ResourceNotFoundException;
 import com.mesara.app.repository.StoreRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,13 @@ public class StoreService {
     }
 
     @Transactional
-    public void saveStore(Store store) {
-        storeRepository.save(store);
+    public Store save(Store store) {
+       return storeRepository.save(store);
     }
 
     public Store getById(Long id) {
-        return storeRepository.findById(id).orElse(null);
+        return storeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
     }
 
     @Transactional
@@ -38,9 +40,8 @@ public class StoreService {
 
     @Transactional
     public void softDelete(Long id) {
-        Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prodavnica nije nađena"));
-        store.setActive(false); // Postavljamo na 0
+        Store store = getById(id);
+        store.setActive(false);
         storeRepository.save(store);
     }
 }
