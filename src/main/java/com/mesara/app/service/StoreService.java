@@ -30,7 +30,7 @@ public class StoreService {
 
     public Store getById(Long id) {
         return storeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Store not found with ID: " + id));
     }
 
     @Transactional
