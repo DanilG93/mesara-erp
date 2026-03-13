@@ -20,7 +20,6 @@ public class DailyStoreReport {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    // Na formi radnik vidi samo ovo
     private LocalDate reportDate;
 
     @Column(precision = 12, scale = 2)
@@ -29,7 +28,6 @@ public class DailyStoreReport {
     @Column(length = 500)
     private String note;
 
-    // Ovo je sakriveno i služi tebi za kontrolu
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }
