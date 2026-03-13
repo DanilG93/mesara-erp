@@ -30,6 +30,12 @@ public class EntryService {
         return reportRepository.findByStoreAndReportDate(store, date).orElse(null);
     }
 
+    public Long getLatestStoreIdWithActivity() {
+        return reportRepository.findTopByOrderByIdDesc()
+                .map(report -> report.getStore().getId())
+                .orElse(null);
+    }
+
     public Map<Long, MovementRowDTO> getMovementMap(DailyStoreReport report) {
         List<StockMovement> movements = movementRepository.findByReport(report);
 

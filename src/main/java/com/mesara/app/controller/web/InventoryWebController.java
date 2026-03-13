@@ -25,18 +25,15 @@ public class InventoryWebController {
         List<Store> allStores = storeService.getAllStores();
         model.addAttribute("stores", allStores);
 
-        // LOGIKA ZA DIFOLTNU RADNJU:
-        if (storeId == null) {
-            storeId = stockService.getLatestStoreIdWithActivity();
+        Long resolvedStoreId = stockService.resolveStoreId(storeId);
 
-            // Ako nema nikakvih aktivnosti u bazi, uzmi bar prvu radnju iz liste da ne bude prazno
-            if (storeId == null && !allStores.isEmpty()) {
-                storeId = allStores.getFirst().getId();
-            }
+        model.addAttribute("selectedStoreId", resolvedStoreId);
+
+        if (resolvedStoreId != null) {
+            model.addAttribute("stocks", stockService.getStockByStore(resolvedStoreId));
+        } else {
+            model.addAttribute("stocks", List.of());
         }
-
-        model.addAttribute("selectedStoreId", storeId);
-        model.addAttribute("stocks", stockService.getStockByStore(storeId));
 
         return "inventory";
     }
