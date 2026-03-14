@@ -1,7 +1,9 @@
 package com.mesara.app.service;
 
 import com.mesara.app.domain.*;
+import com.mesara.app.dto.DailyReportRequest;
 import com.mesara.app.dto.MovementRowDTO;
+import com.mesara.app.exception.ResourceNotFoundException;
 import com.mesara.app.repository.DailyStoreReportRepository;
 import com.mesara.app.repository.ProductStockRepository;
 import com.mesara.app.repository.StockMovementRepository;
@@ -146,7 +148,6 @@ public class EntryService {
                     if (type == MovementType.PURCHASE) {
                         stock.setQuantity(stock.getQuantity().add(diff));
                     } else {
-                        // Prodaja, Otpis i POVRAT ovde oduzimaju zalihe
                         stock.setQuantity(stock.getQuantity().subtract(diff));
                     }
                     stockRepository.save(stock);
@@ -210,7 +211,6 @@ public class EntryService {
                             .map(StockMovement::getQuantity)
                             .reduce(BigDecimal::add).orElse(null);
 
-                    // NOVO:
                     BigDecimal returned = productMovements.stream()
                             .filter(m -> m.getType() == MovementType.RETURN)
                             .map(StockMovement::getQuantity)
@@ -225,8 +225,11 @@ public class EntryService {
     @Transactional
     public void finalizeDay(Long storeId, LocalDate reportDate) {
         Store store = storeService.getById(storeId);
+
         DailyStoreReport report = reportRepository.findByStoreAndReportDate(store, reportDate)
-                .orElseThrow(() -> new RuntimeException("Izvještaj mora postojati."));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Daily report for store " + storeId + " and date " + reportDate + " does not exist."
+                ));
 
         Map<Long, MovementRowDTO> movementMap = getMovementMap(report);
         List<Product> activeProducts = productService.getAllActive();
@@ -251,4 +254,39 @@ public class EntryService {
             }
         }
     }
+
+    @Transactional
+    public void saveDailyReportFromRest(DailyReportRequest request) {
+        Store store = storeService.getById(request.storeId());
+
+        DailyStoreReport report = reportRepository.findByStoreAndReportDate(store, request.reportDate())
+                .orElseGet(DailyStoreReport::new);
+
+        if (report.getId() == null) {
+            report.setStore(store);
+            report.setReportDate(request.reportDate());
+        }
+
+        if (request.totalRevenue() != null) {
+            report.setTotalRevenue(request.totalRevenue());
+        }
+
+        if (request.note() != null && !request.note().isEmpty()) {
+            report.setNote(request.note());
+        }
+
+        DailyStoreReport savedReport = reportRepository.save(report);
+
+        if (request.items() != null) {
+            for (DailyReportRequest.MovementItemDTO item : request.items()) {
+                Product product = productService.getById(item.productId());
+
+                processMovement(product, store, item.received(), MovementType.PURCHASE, savedReport);
+                processMovement(product, store, item.sold(), MovementType.SALE, savedReport);
+                processMovement(product, store, item.waste(), MovementType.WASTE, savedReport);
+                processMovement(product, store, item.returned(), MovementType.RETURN, savedReport);
+            }
+        }
+    }
+
 }
