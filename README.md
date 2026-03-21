@@ -6,6 +6,13 @@ Unlike traditional Point-of-Sale (POS) systems that track every single receipt, 
 
 ---
 
+<img width="1875" height="925" alt="login-mesara-ERP" src="https://github.com/user-attachments/assets/82fe6983-6265-46e1-8a2a-00a9d7a0b36d" />
+<img width="1875" height="925" alt="daily-entry-Mesara-ERP" src="https://github.com/user-attachments/assets/72e93a87-233f-48b3-8a75-ae3a5a885815" />
+
+![Mesara ERP _ BI Analitika](https://github.com/user-attachments/assets/0a2edb5f-db0e-4679-ac59-9047598ad8e4)
+
+
+
 ## 🚀 Key Features
 
 ### 1. Strict Daily Reconciliation (The Core Engine)
