@@ -82,13 +82,13 @@ The database separates the current state from historical logs:
 2. **Configure Environment Variables:**
 * For security reasons, database credentials are externalized. Create a .env file in the root directory (this file is ignored by git via .gitignore):
    ```bash
-   DB_HOST=your_db_host
-   DB_PORT=3306
-   DB_NAME=your_db_name
-   DB_USER=your_db_user
-   DB_PASS=your_secure_password
+  DB_NAME=mesara_db
+   DB_USER=root
+   DB_PASSWORD=your_secure_password
+   DB_ROOT_PASSWORD=your_root_password
    ADMIN_USER=your_username_for_login
    ADMIN_PASS=your_admin_password
+   JWT_SECRET_KEY=your_very_long_secret_key_for_jwt_signatures_min_256_bits
    ```
 3. **Build and Run with Docker Compose:**
 *Run the following command to build the Spring Boot application image and start both the app and the database containers:
@@ -98,6 +98,17 @@ The database separates the current state from historical logs:
 3. **Access the Application:**
 * **Web UI:** Open your browser and navigate to `http://localhost:8080` (or 8081 depending on your setup).
 * **API Documentation:** Access the Swagger UI at `http://localhost:8080/swagger-ui/index.html`.
+
+```markdown
+### 🔄 1-Click Auto Update (Windows)
+The project includes a fully automated batch script for seamless updates. Whenever a new version is pushed to GitHub, simply double-click the `update-mesara.bat` file. 
+
+This script will automatically:
+1. Pull the latest code from the `main` branch.
+2. Safely spin down the current containers (preserving your database volumes).
+3. Rebuild the Maven/Java image with the new code.
+4. Spin up the new containers and prune old unused images to free up disk space.
+```
 
 👨‍💻 **Author:**
 * **Danil Gomanjuk**
