@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 @Configuration
 public class DataInitializer {
 
@@ -21,7 +23,10 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (userRepository.count() == 0) {
+            // Bolji pristup: Tražimo tačno onog korisnika kojeg želimo da napravimo
+            Optional<User> existingAdmin = userRepository.findByUsername(adminUser);
+
+            if (existingAdmin.isEmpty()) {
                 User admin = User.builder()
                         .username(adminUser)
                         .password(passwordEncoder.encode(adminPass))
@@ -30,7 +35,9 @@ public class DataInitializer {
                         .build();
 
                 userRepository.save(admin);
-                System.out.println("INFO: Admin nalog je spreman!");
+                System.out.println("INFO: Admin nalog (" + adminUser + ") je uspešno kreiran!");
+            } else {
+                System.out.println("INFO: Admin nalog (" + adminUser + ") već postoji u bazi.");
             }
         };
     }
