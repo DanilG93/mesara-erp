@@ -23,7 +23,7 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // Bolji pristup: Tražimo tačno onog korisnika kojeg želimo da napravimo
+
             Optional<User> existingAdmin = userRepository.findByUsername(adminUser);
 
             if (existingAdmin.isEmpty()) {
