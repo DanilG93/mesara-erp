@@ -292,6 +292,13 @@
         }
     });
 
+    // Sprečava promenu vrednosti u number poljima prilikom skrolovanja mišem
+    document.addEventListener('wheel', function (event) {
+        if (event.target.type === 'number') {
+            event.target.blur();
+        }
+    });
+
     // DINAMIČKA KALKULACIJA PREPORUKE ZA OTPIS (KALO)
     // Slušamo svaku promenu u poljima koja imaju klasu "calc-input"
     document.addEventListener('input', function (event) {
